@@ -5,7 +5,7 @@ const router = express.Router();
 
 // Hardcoded admin credentials
 const ADMIN_EMAIL = 'sen207580@gmail.com';
-const ADMIN_PASSWORD = '@Success910'; // replace with a strong password
+const ADMIN_PASSWORD = '@Success910'; 
 
 // POST /api/admin/login
 router.post('/login', (req, res) => {

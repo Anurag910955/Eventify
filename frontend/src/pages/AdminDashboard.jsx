@@ -17,7 +17,7 @@ const AdminDashboard = () => {
   const [editingId, setEditingId] = useState(null);
 
   const [message, setMessage] = useState('');
-  const [messageType, setMessageType] = useState(''); // 'success' or 'error'
+  const [messageType, setMessageType] = useState(''); 
 
   const showMessage = (text, type = 'success') => {
     setMessage(text);
@@ -202,7 +202,7 @@ const AdminDashboard = () => {
         />
 
         <input
-          type="number"
+          type="text"
           name="price"
           placeholder="Ticket Price"
           value={formData.price}

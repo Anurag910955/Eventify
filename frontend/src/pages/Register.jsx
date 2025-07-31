@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { register as registerAPI } from "../services/api"; // backend API call
+import { register as registerAPI } from "../services/api"; 
 
 const Register = () => {
   const [formData, setFormData] = useState({

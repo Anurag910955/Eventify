@@ -1,6 +1,6 @@
 // api.js or authHelpers.js
 export const login = async (formData) => {
-  const res = await fetch("http://localhost:5000/api/users/login", {
+  const res = await fetch("https://mini-project-college.onrender.com/api/users/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(formData),
@@ -11,5 +11,5 @@ export const login = async (formData) => {
     throw new Error(errorData.message || "Login failed");
   }
 
-  return await res.json(); // return parsed response
+  return await res.json(); 
 };

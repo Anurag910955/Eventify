@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import EventCard from "../components/EventCard"; // Ensure this component is styled with Tailwind
+import EventCard from "../components/EventCard"; 
 const Home = () => {
   const [search, setSearch] = useState("");
   const [events, setEvents] = useState([]);

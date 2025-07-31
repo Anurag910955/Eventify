@@ -16,6 +16,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import Services from './pages/Services'; 
 import AdminLogin from './pages/AdminLogin';
 import ScrollToTop from './components/ScrollToTop.jsx'; 
+import MyBookings from "./pages/MyBookings";
 
 const Layout = () => {
   const location = useLocation();
@@ -35,6 +36,7 @@ const Layout = () => {
           <Route path="/admin-login" element={<AdminLogin />} />
           <Route path="/admin-dashboard" element={<AdminDashboard />} />
           <Route path="/services" element={<Services />} /> 
+          <Route path="/my-bookings" element={<MyBookings />} />
 
 
           {/* Protected routes */}

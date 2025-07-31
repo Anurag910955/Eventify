@@ -8,14 +8,28 @@ const Contact = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setSuccessMessage("✅ Thank you for reaching out! We'll get back to you soon.");
-    setFormData({ name: "", email: "", message: "" });
+  const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    // Clear message after 5 seconds
+  try {
+    const res = await fetch("https://mini-project-college.onrender.com/api/contact", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
+
+    if (!res.ok) throw new Error("Failed to send message");
+
+    setSuccessMessage("Thank you for reaching out! We'll get back to you soon.");
+    setFormData({ name: "", email: "", message: "" });
     setTimeout(() => setSuccessMessage(""), 5000);
-  };
+  } catch (error) {
+    setSuccessMessage("Something went wrong. Please try again later.");
+    setTimeout(() => setSuccessMessage(""), 5000);
+  }
+};
 
   return (
     <div className="w-screen min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-cyan-100 to-blue-50 px-4 py-12">
@@ -72,7 +86,7 @@ const Contact = () => {
             <i className="fas fa-comment-dots absolute left-4 top-4 text-gray-400"></i>
           </div>
 
-          {/* ✅ Inline Success Message */}
+          {/* Inline Success Message */}
           {successMessage && (
             <div className="text-green-600 font-medium text-center bg-green-50 border border-green-300 rounded-lg p-3">
               {successMessage}

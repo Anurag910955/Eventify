@@ -10,7 +10,7 @@ export const getEvents = async (req, res, next) => {
 };
 export const getEventById = async (req, res, next) => {
   try {
-    console.log("Got event ID:", req.params.id); // 🔍 this line helps debug
+    console.log("Got event ID:", req.params.id); 
     const event = await Event.findById(req.params.id);
     if (event) {
       res.json(event);

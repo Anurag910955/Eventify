@@ -1,10 +1,10 @@
 import express from 'express';
 import Event from '../models/Event.js';
-import Booking from '../models/Booking.js'; // Import Booking model
+import Booking from '../models/Booking.js';
 
 const router = express.Router();
 
-// @desc Get all events with stats (for Admin Dashboard)
+//  Get all events with stats
 router.get('/events', async (req, res) => {
   try {
     const events = await Event.find().sort({ createdAt: -1 });
@@ -29,7 +29,7 @@ router.get('/events', async (req, res) => {
   }
 });
 
-// @desc Create a new event (Admin only)
+//  Create a new event 
 router.post('/events', async (req, res) => {
   const { title, description, date, time, location, price, image } = req.body;
 
@@ -55,7 +55,7 @@ router.post('/events', async (req, res) => {
   }
 });
 
-// @desc Update an existing event
+// Update an existing event
 router.put('/events/:id', async (req, res) => {
   const { id } = req.params;
   const { title, description, date, time, location, price, image } = req.body;

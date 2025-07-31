@@ -55,7 +55,7 @@ const Services = () => {
             className="relative bg-white/60 backdrop-blur-md border border-blue-100 rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 group"
           >
             <div className="absolute -top-6 left-6 bg-blue-100 text-blue-600 p-3 rounded-full shadow-md text-2xl group-hover:scale-105 transition-transform duration-300">
-              💼 {/* You can replace this emoji with any relevant icon */}
+              💼 
             </div>
             <h3 className="text-2xl font-bold text-gray-800 mb-4 mt-4 group-hover:text-blue-600 transition-colors duration-200">
               {service.title}

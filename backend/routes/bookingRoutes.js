@@ -1,9 +1,13 @@
 import express from 'express';
-import { bookEvent } from '../controllers/bookingController.js';
+import { bookEvent, getUserBookings } from '../controllers/bookingController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.post('/', bookEvent);
+// POST /api/bookings 
+router.post('/', protect, bookEvent);
+
+// GET /api/bookings/my-bookings 
+router.get('/my-bookings', protect, getUserBookings);
 
 export default router;

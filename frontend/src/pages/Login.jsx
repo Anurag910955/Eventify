@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { login as loginAPI } from "../services/api"; // import login function from backend API
+import { login as loginAPI } from "../services/api"; 
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });

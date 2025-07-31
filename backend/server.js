@@ -5,9 +5,12 @@ import connectDB from './config/db.js';
 import authRoutes from './routes/authRoutes.js';
 import eventRoutes from './routes/eventRoutes.js';
 import bookingRoutes from './routes/bookingRoutes.js';
-import { errorHandler } from './middleware/errorHandler.js';
 import adminRoutes from './routes/adminRoutes.js';
 import adminAuthRoutes from './routes/adminAuthRoutes.js';
+import otpRoutes from './routes/otp.js';
+import { errorHandler } from './middleware/errorHandler.js';
+import paymentRoutes from "./routes/payment.js";
+import contactRoutes from "./routes/contact.js";
 
 // Load environment variables
 dotenv.config();
@@ -28,19 +31,23 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Health check / Root route
+// Health check route
 app.get('/', (req, res) => {
   res.send('API is running...');
 });
-
+// Contact route
+app.use("/api/contact", contactRoutes);
+ 
+app.use("/api/payment", paymentRoutes);
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/admin', adminAuthRoutes);
+app.use('/api/verify-email', otpRoutes); 
 
-// Error handler middleware
+// Error handling middleware
 app.use(errorHandler);
 
 // Start server
