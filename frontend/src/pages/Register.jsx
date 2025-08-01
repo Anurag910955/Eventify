@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { register as registerAPI } from "../services/api"; 
+import { register as registerAPI } from "../services/api";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -52,12 +52,12 @@ const Register = () => {
   };
 
   return (
-    <div className="w-screen h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 via-blue-100 to-white px-4 py-10">
+    <div className="w-screen min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 via-blue-100 to-white px-4 py-12">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-md bg-white/70 backdrop-blur-xl p-10 rounded-3xl shadow-2xl border border-white/30 transition-all duration-300 animate-fade-in"
+        className="w-full max-w-md bg-white/70 backdrop-blur-xl p-8 md:p-10 rounded-3xl shadow-2xl border border-white/30 transition-all duration-300 animate-fade-in"
       >
-        <h2 className="text-4xl font-extrabold text-center bg-gradient-to-r from-blue-700 to-indigo-600 text-transparent bg-clip-text drop-shadow mb-8">
+        <h2 className="text-3xl md:text-4xl font-extrabold text-center bg-gradient-to-r from-blue-700 to-indigo-600 text-transparent bg-clip-text drop-shadow mb-6 md:mb-8">
           Create your <span className="text-blue-500">Eventify</span> Account
         </h2>
 
@@ -73,7 +73,7 @@ const Register = () => {
           </div>
         )}
 
-        <div className="space-y-6">
+        <div className="space-y-5 md:space-y-6">
           <div className="relative">
             <input
               type="text"

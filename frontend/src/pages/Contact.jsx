@@ -9,38 +9,37 @@ const Contact = () => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  try {
-    const res = await fetch("https://mini-project-college.onrender.com/api/contact", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    });
+    try {
+      const res = await fetch("https://mini-project-college.onrender.com/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
 
-    if (!res.ok) throw new Error("Failed to send message");
+      if (!res.ok) throw new Error("Failed to send message");
 
-    setSuccessMessage("Thank you for reaching out! We'll get back to you soon.");
-    setFormData({ name: "", email: "", message: "" });
-    setTimeout(() => setSuccessMessage(""), 5000);
-  } catch (error) {
-    setSuccessMessage("Something went wrong. Please try again later.");
-    setTimeout(() => setSuccessMessage(""), 5000);
-  }
-};
+      setSuccessMessage("Thank you for reaching out! We'll get back to you soon.");
+      setFormData({ name: "", email: "", message: "" });
+      setTimeout(() => setSuccessMessage(""), 5000);
+    } catch (error) {
+      setSuccessMessage("Something went wrong. Please try again later.");
+      setTimeout(() => setSuccessMessage(""), 5000);
+    }
+  };
 
   return (
-    <div className="w-screen min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-cyan-100 to-blue-50 px-4 py-12">
-      <div className="w-full max-w-4xl bg-white shadow-2xl rounded-3xl p-10 space-y-10">
-        
+    <div className="w-full min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-cyan-100 to-blue-50 px-4 py-12">
+      <div className="w-full max-w-4xl bg-white shadow-2xl rounded-3xl p-6 sm:p-10 space-y-10">
         {/* Title Section */}
         <div>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-center text-blue-600 mb-4">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-center text-blue-600 mb-4">
             Get in Touch
           </h1>
-          <p className="text-center text-gray-600 mb-8 text-lg">
+          <p className="text-center text-gray-600 mb-8 text-base sm:text-lg">
             We'd love to hear from you! Whether you have a question, suggestion, or just want to say hello.
           </p>
         </div>
@@ -86,7 +85,7 @@ const Contact = () => {
             <i className="fas fa-comment-dots absolute left-4 top-4 text-gray-400"></i>
           </div>
 
-          {/* Inline Success Message */}
+          {/* Success Message */}
           {successMessage && (
             <div className="text-green-600 font-medium text-center bg-green-50 border border-green-300 rounded-lg p-3">
               {successMessage}
@@ -103,10 +102,10 @@ const Contact = () => {
 
         {/* Contact Info */}
         <div className="text-center text-gray-700">
-          <h2 className="text-xl font-semibold mb-2">📍 Our Office</h2>
-          <p>123 Innovation Street, Tech City, Indore, India</p>
-          <p>📞 +91 9109554428</p>
-          <p>✉️ eventifyprivatelimited13@gmail.com</p>
+          <h2 className="text-lg sm:text-xl font-semibold mb-2">📍 Our Office</h2>
+          <p className="text-sm sm:text-base">123 Innovation Street, Tech City, Indore, India</p>
+          <p className="text-sm sm:text-base">📞 +91 9109554428</p>
+          <p className="text-sm sm:text-base">✉️ eventifyprivatelimited13@gmail.com</p>
         </div>
 
         {/* Map Embed */}

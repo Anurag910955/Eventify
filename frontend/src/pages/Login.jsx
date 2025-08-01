@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { login as loginAPI } from "../services/api"; 
+import { login as loginAPI } from "../services/api";
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -25,29 +25,28 @@ const Login = () => {
     try {
       const response = await loginAPI({
         email: formData.email.trim(),
-        password: formData.password
+        password: formData.password,
       });
 
       const userData = response.data?.user || response.data;
       const token = response.data?.token || response.data?.accessToken;
 
       if (!userData || !token) {
-        throw new Error('Authentication failed: Invalid server response');
+        throw new Error("Authentication failed: Invalid server response");
       }
 
       login({
         user: userData,
-        token: token
+        token: token,
       });
 
       setSuccess("Login successful! Redirecting...");
-
       setTimeout(() => {
         navigate("/");
       }, 1500);
-
     } catch (err) {
-      const errorMessage = err.response?.data?.message ||
+      const errorMessage =
+        err.response?.data?.message ||
         err.response?.data?.error ||
         err.message ||
         "Login failed. Please try again.";
@@ -56,12 +55,12 @@ const Login = () => {
   };
 
   return (
-    <div className="w-screen h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 via-blue-100 to-white px-4 py-10">
+    <div className="w-full min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 via-blue-100 to-white px-4 py-10">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-md bg-white/70 backdrop-blur-xl p-10 rounded-3xl shadow-2xl border border-white/30 transition-all duration-300 animate-fade-in"
+        className="w-full max-w-md bg-white/70 backdrop-blur-xl p-8 sm:p-10 rounded-3xl shadow-2xl border border-white/30 transition-all duration-300 animate-fade-in"
       >
-        <h2 className="text-4xl font-extrabold text-center bg-gradient-to-r from-blue-700 to-indigo-600 text-transparent bg-clip-text drop-shadow mb-8">
+        <h2 className="text-3xl sm:text-4xl font-extrabold text-center bg-gradient-to-r from-blue-700 to-indigo-600 text-transparent bg-clip-text drop-shadow mb-6 sm:mb-8">
           Welcome to <span className="text-blue-500">Eventify</span>
         </h2>
 
@@ -77,7 +76,7 @@ const Login = () => {
           </div>
         )}
 
-        <div className="space-y-6">
+        <div className="space-y-5 sm:space-y-6">
           <div className="relative">
             <input
               type="email"
@@ -86,7 +85,7 @@ const Login = () => {
               required
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-12 py-3 text-gray-700 rounded-2xl border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none shadow-sm transition placeholder-blue-300"
+              className="w-full px-12 py-3 text-gray-700 rounded-2xl border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none shadow-sm transition placeholder-blue-300 text-sm sm:text-base"
             />
             <span className="absolute top-1/2 left-4 transform -translate-y-1/2 text-gray-400 text-lg">
               📧
@@ -101,7 +100,7 @@ const Login = () => {
               required
               value={formData.password}
               onChange={handleChange}
-              className="w-full px-12 py-3 text-gray-700 rounded-2xl border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none shadow-sm transition placeholder-blue-300"
+              className="w-full px-12 py-3 text-gray-700 rounded-2xl border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none shadow-sm transition placeholder-blue-300 text-sm sm:text-base"
             />
             <span className="absolute top-1/2 left-4 transform -translate-y-1/2 text-gray-400 text-lg">
               🔒
@@ -110,13 +109,13 @@ const Login = () => {
 
           <button
             type="submit"
-            className="w-full py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold tracking-wide shadow-md transform hover:scale-105 transition duration-300"
+            className="w-full py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold tracking-wide shadow-md transform hover:scale-105 transition duration-300 text-sm sm:text-base"
           >
             Login
           </button>
         </div>
 
-        <p className="text-center text-sm mt-8 text-gray-700">
+        <p className="text-center text-sm mt-6 sm:mt-8 text-gray-700">
           Don't have an account?{" "}
           <Link
             to="/register"

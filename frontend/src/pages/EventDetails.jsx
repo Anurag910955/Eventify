@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate, useLocation} from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 
 const EventDetails = () => {
   const { id } = useParams();
@@ -50,19 +50,19 @@ const EventDetails = () => {
   }
 
   return (
-    <div className="w-screen min-h-screen bg-gradient-to-br from-blue-100 via-white to-cyan-100 px-4 py-12 flex items-center justify-center">
+    <div className="w-full min-h-screen bg-gradient-to-br from-blue-100 via-white to-cyan-100 px-4 py-12 flex items-center justify-center">
       <div className="bg-white rounded-3xl shadow-2xl overflow-hidden max-w-5xl w-full flex flex-col md:flex-row transition-all duration-300 hover:shadow-3xl hover:scale-[1.01]">
         <img
           src={event.image || "/placeholder.jpg"}
           alt={event.title || "Event Image"}
-          className="w-full md:w-1/2 h-64 md:h-auto object-cover"
+          className="w-full md:w-1/2 h-64 sm:h-80 md:h-auto object-cover"
         />
-        <div className="p-8 flex flex-col justify-between w-full">
+        <div className="p-6 sm:p-8 flex flex-col justify-between w-full">
           <div>
-            <h1 className="text-4xl font-extrabold text-blue-700 mb-4 tracking-wide">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-blue-700 mb-4 tracking-wide">
               {event.title}
             </h1>
-            <div className="space-y-2 text-gray-700 text-lg">
+            <div className="space-y-2 text-gray-700 text-base sm:text-lg">
               <p>
                 <strong className="text-blue-600">Date:</strong>{" "}
                 {new Date(event.date).toLocaleDateString("en-IN", {
@@ -81,15 +81,15 @@ const EventDetails = () => {
                 <strong className="text-blue-600">Price:</strong> ₹{event.price}
               </p>
             </div>
-            <p className="text-gray-600 mt-6 leading-relaxed text-justify border-l-4 border-cyan-300 pl-4 italic">
+            <p className="text-gray-600 mt-6 leading-relaxed text-justify border-l-4 border-cyan-300 pl-4 italic text-sm sm:text-base">
               {event.description}
             </p>
           </div>
 
-          <div className="mt-8 flex justify-end">
+          <div className="mt-6 sm:mt-8 flex justify-end">
             <button
               onClick={handleBook}
-              className="bg-gradient-to-r from-blue-500 to-cyan-400 text-white font-semibold py-3 px-6 rounded-xl shadow-md hover:shadow-lg hover:scale-105 transition duration-300"
+              className="bg-gradient-to-r from-blue-500 to-cyan-400 text-white font-semibold py-3 px-6 rounded-xl shadow-md hover:shadow-lg hover:scale-105 transition duration-300 text-sm sm:text-base"
             >
               Book Now
             </button>
