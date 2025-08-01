@@ -40,7 +40,9 @@ Eventify is a modern, full-stack event booking web application where users can b
 - Payment ID is verified and saved with the booking
 - Ticket is generated after payment confirmation
 
----
+🚀 Deployment
+Frontend: Deployed on Vercel
+Backend: Deployed on Render
 
 📧 Email & Ticketing Flow
 
