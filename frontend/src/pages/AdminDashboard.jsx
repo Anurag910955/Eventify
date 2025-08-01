@@ -15,8 +15,9 @@ const AdminDashboard = () => {
     image: '',
   });
   const [editingId, setEditingId] = useState(null);
+
   const [message, setMessage] = useState('');
-  const [messageType, setMessageType] = useState('');
+  const [messageType, setMessageType] = useState(''); 
 
   const showMessage = (text, type = 'success') => {
     setMessage(text);
@@ -40,7 +41,7 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     fetchEvents();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleChange = (e) => {
@@ -118,8 +119,8 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="w-full min-h-screen px-4 sm:px-6 py-10 bg-gradient-to-br from-blue-50 to-white">
-      <h1 className="text-4xl sm:text-5xl font-extrabold text-center mb-12 text-blue-700 drop-shadow-lg tracking-tight">
+    <div className="w-screen min-h-screen px-4 py-10 bg-gradient-to-br from-blue-50 to-white">
+      <h1 className="text-5xl font-extrabold text-center mb-12 text-blue-700 drop-shadow-lg tracking-tight">
         Admin Dashboard
       </h1>
 
@@ -138,9 +139,9 @@ const AdminDashboard = () => {
       {/* Event Form */}
       <form
         onSubmit={handleSubmit}
-        className="bg-white/80 backdrop-blur-xl p-6 sm:p-10 rounded-3xl shadow-2xl border border-blue-200 max-w-4xl mx-auto grid gap-6 sm:gap-8 transition-all duration-500"
+        className="bg-white/80 backdrop-blur-xl p-10 rounded-3xl shadow-2xl border border-blue-200 max-w-4xl mx-auto grid gap-8 transition-all duration-500"
       >
-        <h2 className="text-2xl sm:text-3xl font-semibold text-blue-900">
+        <h2 className="text-3xl font-semibold text-blue-900">
           {editingId ? 'Update Event' : 'Create Event'}
         </h2>
 
@@ -163,7 +164,7 @@ const AdminDashboard = () => {
           required
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
             <label className="block text-sm font-semibold text-blue-700 mb-2">Date</label>
             <input
@@ -229,10 +230,10 @@ const AdminDashboard = () => {
       </form>
 
       {/* Events Table */}
-      <div className="bg-white/90 backdrop-blur-md p-6 sm:p-10 mt-16 shadow-2xl max-w-6xl mx-auto rounded-3xl">
-        <h2 className="text-2xl sm:text-3xl font-semibold text-blue-800 mb-6 text-center">All Events</h2>
-        <div className="overflow-x-auto rounded-xl">
-          <table className="min-w-full border text-left bg-white rounded-xl overflow-hidden text-sm sm:text-base">
+      <div className="bg-white/90 backdrop-blur-md p-10 mt-16 shadow-2xl max-w-6xl mx-auto">
+        <h2 className="text-3xl font-semibold text-blue-800 mb-6 text-center">All Events</h2>
+        <div className="overflow-x-auto shadow-sm">
+          <table className="min-w-full border text-left bg-white rounded-xl overflow-hidden">
             <thead className="bg-blue-100 text-blue-800">
               <tr>
                 <th className="p-4 border">Title</th>
@@ -251,7 +252,7 @@ const AdminDashboard = () => {
                   <td className="p-4 border">{event.location}</td>
                   <td className="p-4 border">{event.ticketsSold || 0}</td>
                   <td className="p-4 border">₹{event.totalAmount || 0}</td>
-                  <td className="p-4 border flex flex-wrap gap-2">
+                  <td className="p-4 border flex gap-3">
                     <button
                       onClick={() => handleEdit(event)}
                       className="px-4 py-2 rounded-lg text-sm font-semibold text-blue-700 bg-yellow-200 hover:bg-yellow-300 transition"
@@ -260,7 +261,7 @@ const AdminDashboard = () => {
                     </button>
                     <button
                       onClick={() => handleDelete(event._id)}
-                      className="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-red-500 hover:bg-red-600 transition"
+                      className="px-4 py-2 rounded-lg text-sm font-semibold text-blue-700 bg-yellow-200 hover:bg-red-600 transition"
                     >
                       Delete
                     </button>
@@ -278,30 +279,28 @@ const AdminDashboard = () => {
           </table>
         </div>
       </div>
-
-      {/* Bar Chart */}
-      <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-xl mt-10 max-w-6xl mx-auto">
-        <h3 className="text-lg sm:text-xl font-semibold text-blue-700 mb-4 text-center">Tickets Sold per Event</h3>
-        <ResponsiveContainer width="100%" height={400}>
-          <BarChart
-            data={events.map(e => ({
-              name: e.title.length > 15 ? e.title.slice(0, 15) + '…' : e.title,
-              ticketsSold: e.ticketsSold || 0,
-              totalAmount: e.totalAmount || 0
-            }))}
-            margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" angle={-40} textAnchor="end" interval={0} />
-            <YAxis yAxisId="left" label={{ value: 'Tickets Sold', angle: -90, position: 'insideLeft' }} />
-            <YAxis yAxisId="right" orientation="right" label={{ value: 'Total Amount (₹)', angle: 90, position: 'insideRight' }} />
-            <Tooltip />
-            <Legend />
-            <Bar yAxisId="left" dataKey="ticketsSold" fill="#8884d8" name="Tickets Sold" />
-            <Bar yAxisId="right" dataKey="totalAmount" fill="#82ca9d" name="Total Amount" />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+      <div className="bg-white p-6 rounded-2xl shadow-xl mt-10">
+  <h3 className="text-xl font-semibold text-blue-700 mb-4 text-center">Tickets Sold per Event</h3>
+  <ResponsiveContainer width="100%" height={400}>
+  <BarChart
+    data={events.map(e => ({
+      name: e.title.length > 15 ? e.title.slice(0, 15) + '…' : e.title,
+      ticketsSold: e.ticketsSold || 0,
+      totalAmount: e.totalAmount || 0
+    }))}
+    margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
+  >
+    <CartesianGrid strokeDasharray="3 3" />
+    <XAxis dataKey="name" angle={-40} textAnchor="end" interval={0} />
+    <YAxis yAxisId="left" label={{ value: 'Tickets Sold', angle: -90, position: 'insideLeft' }} />
+    <YAxis yAxisId="right" orientation="right" label={{ value: 'Total Amount (₹)', angle: 90, position: 'insideRight' }} />
+    <Tooltip />
+    <Legend />
+    <Bar yAxisId="left" dataKey="ticketsSold" fill="#8884d8" name="Tickets Sold" />
+    <Bar yAxisId="right" dataKey="totalAmount" fill="#82ca9d" name="Total Amount" />
+  </BarChart>
+</ResponsiveContainer>
+</div>
     </div>
   );
 };

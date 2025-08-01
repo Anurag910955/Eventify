@@ -38,9 +38,9 @@ const MyBookings = () => {
   }, [user]);
 
   return (
-    <div className="w-full min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto bg-white/80 shadow-xl rounded-3xl p-6 sm:p-10">
-        <h2 className="text-3xl sm:text-4xl font-bold text-blue-700 text-center mb-8 sm:mb-10 drop-shadow">
+    <div className="w-screen min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 py-12 px-4">
+      <div className="max-w-6xl mx-auto bg-white/80 shadow-xl rounded-3xl p-8">
+        <h2 className="text-4xl font-bold text-blue-700 text-center mb-10 drop-shadow">
           🎫 My Bookings
         </h2>
 
@@ -53,17 +53,17 @@ const MyBookings = () => {
         ) : bookings.length === 0 ? (
           <p className="text-center text-gray-600 text-lg">You have no bookings yet.</p>
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {bookings.map((booking) => (
               <div
                 key={booking._id}
-                className="bg-white border border-gray-200 rounded-2xl p-5 sm:p-6 shadow-md hover:shadow-xl transition duration-300"
+                className="bg-white border border-gray-200 rounded-2xl p-6 shadow-md hover:shadow-xl transition duration-300"
               >
-                <h3 className="text-xl sm:text-2xl font-bold text-indigo-700 mb-3">
+                <h3 className="text-2xl font-bold text-indigo-700 mb-3">
                   {booking.event?.title || "Untitled Event"}
                 </h3>
 
-                <div className="space-y-2 text-gray-700 text-sm sm:text-base">
+                <div className="space-y-2 text-gray-700 text-sm">
                   <p className="flex items-center gap-2">
                     <CalendarDays className="w-5 h-5 text-blue-500" />
                     <span>

@@ -24,6 +24,7 @@ const Booking = () => {
   const [otpVerified, setOtpVerified] = useState(false);
   const [verifyingOtp, setVerifyingOtp] = useState(false);
   const [sendingOtp, setSendingOtp] = useState(false);
+
   const [otpTimer, setOtpTimer] = useState(0);
 
   useEffect(() => {
@@ -75,7 +76,7 @@ const Booking = () => {
       });
       if (!res.ok) throw new Error("Failed to send OTP");
       setOtpSent(true);
-      setOtpTimer(120);
+      setOtpTimer(120); // 2 minutes
     } catch (err) {
       setError(err.message);
     } finally {
@@ -161,12 +162,7 @@ const Booking = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${user.token}`,
         },
-        body: JSON.stringify({
-          eventId: id,
-          ...formData,
-          totalPayment,
-          razorpayPaymentId: formData.razorpayPaymentId,
-        }),
+        body: JSON.stringify({ eventId: id, ...formData, totalPayment, razorpayPaymentId: formData.razorpayPaymentId }),
       });
       if (!res.ok) {
         const data = await res.json();
@@ -180,14 +176,16 @@ const Booking = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-gradient-to-br from-sky-100 via-white to-blue-100 flex items-center justify-center px-4 py-10">
-      <div className="w-full max-w-2xl bg-white/70 backdrop-blur-md border border-white/30 shadow-2xl rounded-3xl p-6 sm:p-10">
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-center text-blue-700 mb-2">
+    <div className="w-screen min-h-screen bg-gradient-to-br from-sky-100 via-white to-blue-100 flex items-center justify-center p-6">
+      <div className="w-full max-w-2xl bg-white/70 backdrop-blur-md border border-white/30 shadow-2xl rounded-3xl p-10">
+        <h2 className="text-4xl md:text-5xl font-extrabold text-center text-blue-700 mb-2">
           🎟️ Book Your Spot
         </h2>
-        <p className="text-center text-gray-700 mb-6 text-base sm:text-lg md:text-xl font-medium">
+        <p className="text-center text-gray-700 mb-6 text-lg md:text-xl font-medium">
           You’re booking for:{" "}
-          <span className="text-black font-bold italic underline">{eventTitle}</span>
+          <span className="text-black font-bold italic underline">
+            {eventTitle}
+          </span>
         </p>
 
         {ticketPrice === null ? (
@@ -195,9 +193,9 @@ const Booking = () => {
             Fetching event details...
           </p>
         ) : !submitted ? (
-          <form onSubmit={handleSubmit} className="space-y-6 text-sm sm:text-base">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block font-semibold">✏️ Your Name:</label>
+              <label className="block text-sm font-semibold">✏️ Your Name:</label>
               <input
                 type="text"
                 name="name"
@@ -209,7 +207,7 @@ const Booking = () => {
             </div>
 
             <div>
-              <label className="block font-semibold">📧 Email Address:</label>
+              <label className="block text-sm font-semibold">📧 Email Address:</label>
               <input
                 type="email"
                 name="email"
@@ -223,12 +221,12 @@ const Booking = () => {
                   type="button"
                   onClick={handleSendOtp}
                   disabled={sendingOtp}
-                  className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-xl w-full sm:w-auto"
+                  className="mt-2 px-4 py-2 bg-blue-600 rounded-xl"
                 >
                   {sendingOtp ? "Sending OTP..." : "Send OTP"}
                 </button>
               ) : !otpVerified ? (
-                <div className="mt-3 space-y-2">
+                <div className="mt-3">
                   <input
                     type="text"
                     value={otp}
@@ -240,7 +238,7 @@ const Booking = () => {
                     type="button"
                     onClick={handleVerifyOtp}
                     disabled={verifyingOtp}
-                    className="w-full sm:w-auto px-4 py-2 bg-green-600 text-white rounded-xl"
+                    className="mt-2 px-4 py-2 bg-green-600 rounded-xl"
                   >
                     {verifyingOtp ? "Verifying..." : "Verify OTP"}
                   </button>
@@ -256,7 +254,7 @@ const Booking = () => {
             {otpVerified && (
               <>
                 <div>
-                  <label className="block font-semibold">🎫 Number of Tickets:</label>
+                  <label className="block text-sm font-semibold">🎫 Number of Tickets:</label>
                   <input
                     type="number"
                     name="tickets"
@@ -269,7 +267,7 @@ const Booking = () => {
                 </div>
 
                 <div>
-                  <label className="block font-semibold">💰 Total Payment (₹):</label>
+                  <label className="block text-sm font-semibold">💰 Total Payment (₹):</label>
                   <input
                     type="text"
                     value={isNaN(totalPayment) ? "" : totalPayment}
@@ -282,7 +280,7 @@ const Booking = () => {
                   <button
                     type="button"
                     onClick={handlePayment}
-                    className="w-full mt-4 py-3 bg-purple-600 text-white font-bold rounded-2xl"
+                    className="w-full mt-4 py-3 bg-purple-600  font-bold rounded-2xl"
                   >
                     Pay with Razorpay
                   </button>
@@ -303,7 +301,7 @@ const Booking = () => {
               disabled={!isPaid || !otpVerified}
               className={`w-full py-3 rounded-2xl font-bold transition ${
                 isPaid && otpVerified
-                  ? "bg-blue-600 text-white hover:bg-blue-700"
+                  ? "bg-blue-600 hover:bg-blue-700 "
                   : "bg-gray-300 text-gray-500 cursor-not-allowed"
               }`}
             >

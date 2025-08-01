@@ -38,37 +38,38 @@ const Services = () => {
   ];
 
   return (
-    <div className="w-screen min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-100 via-white to-blue-50 px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-      {loading ? (
-        <div className="text-center text-gray-500 text-xl animate-pulse">
-          Loading services...
-        </div>
-      ) : (
-        <div className="max-w-7xl w-full">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-center text-blue-700 mb-10 sm:mb-12 drop-shadow-sm">
-            Our Premium Services
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
-            {services.map((service, index) => (
-              <div
-                key={index}
-                className="relative bg-white/60 backdrop-blur-md border border-blue-100 rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 group"
-              >
-                <div className="absolute -top-6 left-6 bg-blue-100 text-blue-600 p-3 rounded-full shadow-md text-2xl group-hover:scale-105 transition-transform duration-300">
-                  💼
-                </div>
-                <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3 mt-6 group-hover:text-blue-600 transition-colors duration-200">
-                  {service.title}
-                </h3>
-                <p className="text-gray-700 leading-relaxed text-justify text-sm sm:text-base">
-                  {service.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+    <div className="w-screen min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-100 via-white to-blue-50 px-6 py-16">
+  {loading ? (
+    <div className="text-center text-gray-500 text-xl animate-pulse">
+      Loading services...
     </div>
+  ) : (
+    <div className="max-w-7xl w-full">
+      <h2 className="text-5xl font-extrabold text-center text-blue-700 mb-12 drop-shadow-sm">
+        Our Premium Services
+      </h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+        {services.map((service, index) => (
+          <div
+            key={index}
+            className="relative bg-white/60 backdrop-blur-md border border-blue-100 rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 group"
+          >
+            <div className="absolute -top-6 left-6 bg-blue-100 text-blue-600 p-3 rounded-full shadow-md text-2xl group-hover:scale-105 transition-transform duration-300">
+              💼 
+            </div>
+            <h3 className="text-2xl font-bold text-gray-800 mb-4 mt-4 group-hover:text-blue-600 transition-colors duration-200">
+              {service.title}
+            </h3>
+            <p className="text-gray-700 leading-relaxed text-justify text-md">
+              {service.description}
+            </p>
+          </div>
+        ))}
+      </div>
+     </div>
+     )}
+     </div>
+
   );
 };
 
