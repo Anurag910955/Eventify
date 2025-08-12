@@ -87,7 +87,7 @@ const Navbar = () => {
           </li>
           <li>
             <Link
-              to="/login"
+              to="/"
               className="text-blue-600 border border-blue-500 px-4 py-2 rounded-lg hover:bg-yellow-100 transition duration-300"
               onClick={() => setIsMenuOpen(false)}
             >
