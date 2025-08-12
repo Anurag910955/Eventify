@@ -41,9 +41,7 @@ const Layout = () => {
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/admin-login" element={<AdminLogin />} />
-          <Route path="/admin-dashboard" element={<AdminDashboard />} />
           <Route path="/services" element={<Services />} /> 
-          <Route path="/my-bookings" element={<MyBookings />} />
 
           {/* Protected routes */}
           <Route element={<ProtectedRoute />}>
@@ -51,6 +49,8 @@ const Layout = () => {
             <Route path="/event/:id" element={<EventDetails />} />
             <Route path="/booking/:id" element={<Booking />} />
             <Route path="/thank-you" element={<ThankYou />} />
+            <Route path="/admin-dashboard" element={<AdminDashboard />} />
+            <Route path="/my-bookings" element={<MyBookings />} />
           </Route>
 
           {/* 404 */}
