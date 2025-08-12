@@ -5,6 +5,9 @@ import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
 import bcrypt from 'bcryptjs';
 
+// =====================
+// REGISTER USER
+// =====================
 export const registerUser = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
@@ -17,12 +20,20 @@ export const registerUser = async (req, res, next) => {
     const user = await User.create({ name, email, password });
     const token = generateToken(user._id);
 
-    res.status(201).json({ _id: user._id, name: user.name, email: user.email, token });
+    res.status(201).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      token
+    });
   } catch (error) {
     next(error);
   }
 };
 
+// =====================
+// LOGIN USER
+// =====================
 export const loginUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -30,7 +41,12 @@ export const loginUser = async (req, res, next) => {
 
     if (user && (await user.matchPassword(password))) {
       const token = generateToken(user._id);
-      res.json({ _id: user._id, name: user.name, email: user.email, token });
+      res.json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        token
+      });
     } else {
       res.status(401).json({ message: 'Invalid email or password' });
     }
@@ -40,7 +56,7 @@ export const loginUser = async (req, res, next) => {
 };
 
 // =====================
-// Forgot Password
+// FORGOT PASSWORD (OTP)
 // =====================
 export const forgotPassword = async (req, res, next) => {
   try {
@@ -51,12 +67,14 @@ export const forgotPassword = async (req, res, next) => {
       return res.status(404).json({ message: 'No account found with that email' });
     }
 
-    // Create reset token
-    const resetToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: '15m',
-    });
+    // Generate 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpExpiry = Date.now() + 10 * 60 * 1000; // 10 minutes
 
-    const resetURL = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
+    // Save OTP & expiry in DB (temporary fields)
+    user.resetOTP = otp;
+    user.resetOTPExpiry = otpExpiry;
+    await user.save();
 
     // Setup Nodemailer
     const transporter = nodemailer.createTransport({
@@ -70,22 +88,52 @@ export const forgotPassword = async (req, res, next) => {
     await transporter.sendMail({
       from: `"Eventify Support" <${process.env.EMAIL_USER}>`,
       to: email,
-      subject: 'Password Reset Request',
+      subject: 'Your OTP for Password Reset',
       html: `
-        <p>You requested a password reset for your Eventify account.</p>
-        <p>Click <a href="${resetURL}">here</a> to reset your password. 
-        This link will expire in 15 minutes.</p>
+        <p>Your OTP for password reset is:</p>
+        <h2>${otp}</h2>
+        <p>This OTP will expire in 10 minutes.</p>
       `,
     });
 
-    res.json({ message: 'Password reset link sent to your email' });
+    res.json({ message: 'OTP sent to your email' });
   } catch (error) {
     next(error);
   }
 };
 
 // =====================
-// Reset Password
+// VERIFY OTP
+// =====================
+export const verifyOTP = async (req, res, next) => {
+  try {
+    const { email, otp } = req.body;
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (user.resetOTP !== otp || Date.now() > user.resetOTPExpiry) {
+      return res.status(400).json({ message: 'Invalid or expired OTP' });
+    }
+
+    // OTP is correct → create a short-lived token for password reset
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '15m' });
+
+    // Clear OTP fields after verification
+    user.resetOTP = undefined;
+    user.resetOTPExpiry = undefined;
+    await user.save();
+
+    res.json({ message: 'OTP verified', token });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// =====================
+// RESET PASSWORD
 // =====================
 export const resetPassword = async (req, res, next) => {
   try {
@@ -109,7 +157,7 @@ export const resetPassword = async (req, res, next) => {
     res.json({ message: 'Password reset successful' });
   } catch (error) {
     if (error.name === 'TokenExpiredError') {
-      return res.status(400).json({ message: 'Reset link has expired' });
+      return res.status(400).json({ message: 'Reset token has expired' });
     }
     next(error);
   }
