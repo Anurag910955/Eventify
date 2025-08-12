@@ -29,7 +29,7 @@ const ThankYou = () => {
     </p>
 
     <Link
-      to="/"
+      to="/home"
       className="inline-block bg-green-500 text-white font-semibold px-6 py-3 rounded-xl hover:bg-green-600 transition duration-300 shadow-md"
     >
       ⬅ Back to Home
