@@ -43,8 +43,8 @@ const ForgotPassword = () => {
       { email, otp }
     );
 
-    const resetToken = data.token; // capture backend token
-    window.location.href = `/reset-password/${resetToken}`;
+    const res = data.token; // capture backend token
+    window.location.href = `/reset-password/${res.data.token}`;
   } catch (err) {
     setError(err.response?.data?.message || "Invalid OTP");
   }
