@@ -13,7 +13,7 @@ const ForgotPassword = () => {
     e.preventDefault();
     setError("");
     try {
-      await axios.post("/api/auth/forgot-password", { email });
+      await axios.post("https://mini-project-college.onrender.com/api/auth/forgot-password", { email });
       setOtpSent(true); // Show OTP input field
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong");
@@ -25,7 +25,7 @@ const ForgotPassword = () => {
     e.preventDefault();
     setError("");
     try {
-      await axios.post("/api/auth/verify-otp", { email, otp });
+      await axios.post("https://mini-project-college.onrender.com/api/auth/verify-otp", { email, otp });
       // If OTP is correct, redirect to reset password page
       window.location.href = `/reset-password?email=${encodeURIComponent(email)}`;
     } catch (err) {
