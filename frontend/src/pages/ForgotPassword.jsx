@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Mail } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
-  const [timer, setTimer] = useState(0); // Countdown timer
+  const [timer, setTimer] = useState(0);
+  const [loading, setLoading] = useState(false); // For button loading state
 
-  // Handle countdown effect
   useEffect(() => {
     let countdown;
     if (timer > 0) {
@@ -20,32 +21,33 @@ const ForgotPassword = () => {
     return () => clearInterval(countdown);
   }, [timer]);
 
-  // Step 1: Request OTP
   const handleSendOtp = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
     try {
-      await axios.post("https://mini-project-college.onrender.com/api/auth/forgot-password", { email });
+      await axios.post(
+        "https://mini-project-college.onrender.com/api/auth/forgot-password",
+        { email }
+      );
       setOtpSent(true);
-      setTimer(60); // Start 1-minute countdown
+      setTimer(60);
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Step 2: Verify OTP
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
     setError("");
     try {
-      console.log("Verifying OTP with:", { email, otp: otp.trim() });
-
       const { data } = await axios.post(
         "https://mini-project-college.onrender.com/api/auth/verify-otp",
         { email, otp: otp.trim() }
       );
-
-      const token = data.token; // expecting backend response: { token: '...' }
+      const token = data.token;
       if (token) {
         window.location.href = `/reset-password/${token}`;
       } else {
@@ -56,48 +58,55 @@ const ForgotPassword = () => {
     }
   };
 
-  // Step 3: Resend OTP
   const handleResendOtp = async () => {
     setError("");
+    setLoading(true);
     try {
-      await axios.post("https://mini-project-college.onrender.com/api/auth/forgot-password", { email });
-      setTimer(60); // Restart timer
+      await axios.post(
+        "https://mini-project-college.onrender.com/api/auth/forgot-password",
+        { email }
+      );
+      setTimer(60);
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="w-screen h-screen flex items-center justify-center bg-gradient-to-br from-blue-200 via-indigo-400 to-purple-500 px-4">
+    <div className="w-screen h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 via-blue-100 to-white px-4 py-10">
       <form
         onSubmit={otpSent ? handleVerifyOtp : handleSendOtp}
-        className="w-full max-w-md backdrop-blur-lg bg-white/10 p-8 rounded-2xl shadow-xl border border-white/20"
+        className="w-full max-w-md bg-white/70 backdrop-blur-xl p-10 rounded-3xl shadow-2xl border border-white/30 transition-all duration-300 animate-fade-in"
       >
-        <h2 className="text-3xl font-bold text-white text-center mb-2">
+        <h2 className="text-4xl font-extrabold text-center bg-gradient-to-r from-blue-700 to-indigo-600 text-transparent bg-clip-text drop-shadow mb-8">
           Forgot Password?
         </h2>
-        <p className="text-white/80 text-center text-sm mb-6">
+
+        <p className="text-center text-gray-700 mb-6 text-sm">
           {otpSent
             ? "Enter the OTP sent to your email."
             : "Enter your registered email and we’ll send you an OTP."}
         </p>
 
         {error && (
-          <div className="bg-red-500/20 text-red-200 p-2 rounded-md text-sm mb-3">
+          <div className="text-red-700 text-sm bg-red-100 border border-red-300 p-3 rounded-lg animate-pulse mb-4">
             {error}
           </div>
         )}
 
         {!otpSent && (
-          <div className="relative mb-4">
-            <Mail className="absolute left-3 top-2.5 text-white/70" size={20} />
+          <div className="relative mb-6">
+            <Mail className="absolute left-4 top-3 text-gray-400 text-lg" />
             <input
               type="email"
               placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full pl-10 pr-4 py-2 rounded-lg bg-white/20 text-white placeholder-white/60 border border-white/30 focus:outline-none focus:ring-2 focus:ring-blue-300"
+              className="w-full pl-12 pr-4 py-3 rounded-2xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm placeholder-gray-400 transition"
+              disabled={loading}
             />
           </div>
         )}
@@ -110,19 +119,21 @@ const ForgotPassword = () => {
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
               required
-              className="w-full px-4 py-2 rounded-lg bg-white/20 text-white placeholder-white/60 border border-white/30 focus:outline-none focus:ring-2 focus:ring-blue-300 mb-4"
+              className="w-full px-4 py-3 rounded-2xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm placeholder-gray-400 mb-6 transition"
+              disabled={loading}
             />
             {timer > 0 ? (
-              <p className="text-white/70 text-sm mb-4">
+              <p className="text-gray-600 text-sm mb-6 text-center">
                 Resend OTP in {timer} seconds
               </p>
             ) : (
               <button
                 type="button"
                 onClick={handleResendOtp}
-                className="w-full mb-4 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-orange-500 hover:to-yellow-500 transition-all duration-300 text-white py-2 rounded-lg font-semibold shadow-md hover:shadow-lg"
+                disabled={loading}
+                className="w-full mb-6 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-orange-500 hover:to-yellow-500 transition-all duration-300 text-white py-3 rounded-2xl font-semibold shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Resend OTP
+                {loading ? "Sending..." : "Resend OTP"}
               </button>
             )}
           </>
@@ -130,20 +141,18 @@ const ForgotPassword = () => {
 
         <button
           type="submit"
-          disabled={otpSent && timer > 0 && !otp}
-          className={`w-full mt-2 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-indigo-500 hover:to-blue-500 transition-all duration-300 text-white py-2 rounded-lg font-semibold shadow-md hover:shadow-lg ${
-            otpSent && timer > 0 && !otp ? "opacity-50 cursor-not-allowed" : ""
-          }`}
+          disabled={loading || (otpSent && !otp)}
+          className={`w-full py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold tracking-wide shadow-md transform hover:scale-105 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed`}
         >
-          {otpSent ? "Verify OTP" : "Send OTP"}
+          {loading ? (otpSent ? "Verifying..." : "Sending OTP...") : otpSent ? "Verify OTP" : "Send OTP"}
         </button>
 
         {!otpSent && (
-          <p className="text-center text-white/70 text-sm mt-6">
+          <p className="text-center text-gray-700 text-sm mt-8">
             Remembered your password?{" "}
-            <a href="/login" className="text-blue-300 hover:underline">
+            <Link to="/login" className="text-blue-600 hover:underline font-semibold">
               Login here
-            </a>
+            </Link>
           </p>
         )}
       </form>
