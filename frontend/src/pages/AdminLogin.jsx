@@ -59,6 +59,9 @@ const AdminLogin = () => {
           onChange={(e) => setEmail(e.target.value)}
           required
         />
+        <span className="absolute left-4 top-10 transform -translate-y-1/2 text-gray-400">
+          📧
+        </span>
         
       </div>
 
@@ -72,6 +75,9 @@ const AdminLogin = () => {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
+        <span className="absolute left-4 top-10 transform -translate-y-1/2 text-gray-400">
+          🔒
+        </span>
         
       </div>
 
