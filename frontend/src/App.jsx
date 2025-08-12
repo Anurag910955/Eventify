@@ -34,7 +34,7 @@ const Layout = () => {
         <ScrollToTop />
         <Routes>
           {/* Public routes */}
-          <Route path="/login" element={<Login />} />
+          {/* <Route path="/login" element={<Login />} /> */}
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
@@ -43,7 +43,7 @@ const Layout = () => {
 
           {/* Protected routes */}
           <Route element={<ProtectedRoute />}>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Login/>} />
             <Route path="/event/:id" element={<EventDetails />} />
             <Route path="/booking/:id" element={<Booking />} />
             <Route path="/thank-you" element={<ThankYou />} />
