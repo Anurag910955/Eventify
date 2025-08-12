@@ -18,13 +18,18 @@ import ScrollToTop from './components/ScrollToTop.jsx';
 import MyBookings from "./pages/MyBookings";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import NotFound from './pages/NotFound';
 
 const Layout = () => {
   const location = useLocation();
-  const hideLayout = location.pathname === "/" || 
+
+  // Paths where Navbar and Footer should be hidden
+  const hideLayout = 
+    location.pathname === "/" || 
     location.pathname === "/register" ||  
     location.pathname === "/forgot-password" || 
-    location.pathname.startsWith("/reset-password/");
+    location.pathname.startsWith("/reset-password/") ||
+    location.pathname === "/404"; // We'll also hide for not found route
 
   return (
     <>
@@ -38,8 +43,6 @@ const Layout = () => {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
           
-           
-
           {/* Protected routes */}
           <Route element={<ProtectedRoute />}>
             <Route path="/home" element={<Home />} />
@@ -53,6 +56,9 @@ const Layout = () => {
             <Route path="/services" element={<Services />} />
             <Route path="/admin-login" element={<AdminLogin />} />
           </Route>
+
+          {/* Not Found route */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
       {!hideLayout && <Footer />}

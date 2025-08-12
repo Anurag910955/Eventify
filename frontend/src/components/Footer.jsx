@@ -16,7 +16,7 @@ const Footer = () => {
 
         <div className="flex flex-wrap justify-center gap-4 sm:gap-6 text-sm font-medium">
           <Link
-            to="/"
+            to="/home"
             className="hover:text-blue-400 transition duration-200"
           >
             Home
