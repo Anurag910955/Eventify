@@ -12,10 +12,10 @@ const NotFound = () => {
         The page you’re looking for doesn’t exist or has been moved.
       </p>
       <Link
-        to="/home"
-        className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition duration-200"
+        to="/"
+        className="px-6 py-3 bg-blue-300 text-white font-medium rounded-lg hover:bg-blue-700 transition duration-200"
       >
-        Back to Home
+        Back to Login
       </Link>
     </div>
   );
