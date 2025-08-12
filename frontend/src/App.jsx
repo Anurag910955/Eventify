@@ -38,7 +38,7 @@ const Layout = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
-          <Route path="/admin-login" element={<AdminLogin />} />
+          
            
 
           {/* Protected routes */}
@@ -52,6 +52,7 @@ const Layout = () => {
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/services" element={<Services />} />
+            <Route path="/admin-login" element={<AdminLogin />} />
           </Route>
 
           {/* 404 */}
