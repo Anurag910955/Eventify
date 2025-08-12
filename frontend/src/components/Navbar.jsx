@@ -11,7 +11,7 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <div className="text-3xl sm:text-4xl font-sans font-extrabold text-blue-700 tracking-tight">
           <Link
-            to="/"
+            to="/home"
             className="hover:underline underline-offset-4 text-4xl sm:text-5xl font-serif"
           >
             Eventify
