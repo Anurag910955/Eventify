@@ -43,7 +43,7 @@ const Login = () => {
       setSuccess("Login successful! Redirecting...");
 
       setTimeout(() => {
-        navigate("/");
+        navigate("/home");
       }, 1500);
 
     } catch (err) {
