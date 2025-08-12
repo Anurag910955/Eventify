@@ -23,7 +23,7 @@ const MyBookings = () => {
         setBookings(response.data);
       } catch (err) {
         console.error("Error fetching bookings:", err);
-        setError("⚠️ Failed to load bookings.");
+        setError("Failed to load bookings.");
       } finally {
         setLoading(false);
       }

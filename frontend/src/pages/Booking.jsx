@@ -195,7 +195,7 @@ const Booking = () => {
         ) : !submitted ? (
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-semibold">✏️ Your Name:</label>
+              <label className="block text-sm font-semibold">Your Name:</label>
               <input
                 type="text"
                 name="name"
@@ -243,18 +243,18 @@ const Booking = () => {
                     {verifyingOtp ? "Verifying..." : "Verify OTP"}
                   </button>
                   <p className="text-sm text-gray-500 mt-1">
-                    ⏳ You can resend OTP in {otpTimer} sec
+                    You can resend OTP in {otpTimer} sec
                   </p>
                 </div>
               ) : (
-                <p className="text-green-600 mt-2">✅ OTP Verified</p>
+                <p className="text-green-600 mt-2">OTP Verified</p>
               )}
             </div>
 
             {otpVerified && (
               <>
                 <div>
-                  <label className="block text-sm font-semibold">🎫 Number of Tickets:</label>
+                  <label className="block text-sm font-semibold">Number of Tickets:</label>
                   <input
                     type="number"
                     name="tickets"
@@ -267,7 +267,7 @@ const Booking = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold">💰 Total Payment (₹):</label>
+                  <label className="block text-sm font-semibold">Total Payment (₹):</label>
                   <input
                     type="text"
                     value={isNaN(totalPayment) ? "" : totalPayment}
@@ -286,7 +286,7 @@ const Booking = () => {
                   </button>
                 ) : (
                   <p className="text-green-600 text-center font-semibold animate-pulse">
-                    ✅ Payment completed. You can now confirm your booking.
+                    Payment completed. You can now confirm your booking.
                   </p>
                 )}
               </>

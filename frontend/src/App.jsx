@@ -10,7 +10,6 @@ import Register from './pages/Register';
 import EventDetails from './pages/EventDetails';
 import Booking from './pages/Booking';
 import ThankYou from './pages/ThankYou';
-import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import AdminDashboard from './pages/AdminDashboard';
 import Services from './pages/Services'; 
@@ -23,8 +22,7 @@ import ResetPassword from "./pages/ResetPassword";
 const Layout = () => {
   const location = useLocation();
   const hideLayout = location.pathname === "/" || 
-    location.pathname === "/register" || 
-    location.pathname === "/404" || 
+    location.pathname === "/register" ||  
     location.pathname === "/forgot-password" || 
     location.pathname.startsWith("/reset-password/");
 
@@ -55,9 +53,6 @@ const Layout = () => {
             <Route path="/services" element={<Services />} />
             <Route path="/admin-login" element={<AdminLogin />} />
           </Route>
-
-          {/* 404 */}
-          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
       {!hideLayout && <Footer />}

@@ -99,9 +99,7 @@ const Register = () => {
               onChange={handleChange}
               className="w-full px-12 py-3 text-gray-800 rounded-2xl border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none shadow-sm transition placeholder-blue-300"
             />
-            <span className="absolute top-1/2 left-4 transform -translate-y-1/2 text-gray-400 text-lg">
-              📧
-            </span>
+            
           </div>
 
           <div className="relative">
@@ -114,9 +112,7 @@ const Register = () => {
               onChange={handleChange}
               className="w-full px-12 py-3 text-gray-700 rounded-2xl border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none shadow-sm transition placeholder-blue-300"
             />
-            <span className="absolute top-1/2 left-4 transform -translate-y-1/2 text-gray-400 text-lg">
-              🔒
-            </span>
+            
           </div>
 
           <div className="relative">
@@ -129,9 +125,7 @@ const Register = () => {
               onChange={handleChange}
               className="w-full px-12 py-3 text-gray-700 rounded-2xl border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none shadow-sm transition placeholder-blue-300"
             />
-            <span className="absolute top-1/2 left-4 transform -translate-y-1/2 text-gray-400 text-lg">
-              ✅
-            </span>
+           
           </div>
 
           <button
