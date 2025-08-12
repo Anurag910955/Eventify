@@ -39,7 +39,7 @@ const ForgotPassword = () => {
     setError("");
     try {
       await axios.post("https://mini-project-college.onrender.com/api/auth/verify-otp", { email, otp });
-      window.location.href = `/reset-password`; // Redirect to reset password page
+      window.location.href = `/reset-password/${resetToken}`; // Redirect to reset password page
     } catch (err) {
       setError(err.response?.data?.message || "Invalid OTP");
     }
