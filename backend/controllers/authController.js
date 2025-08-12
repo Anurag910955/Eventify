@@ -3,7 +3,6 @@ import User from '../models/User.js';
 import generateToken from '../utils/generateToken.js';
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
-import bcrypt from 'bcryptjs';
 
 // =====================
 // REGISTER USER
@@ -24,7 +23,7 @@ export const registerUser = async (req, res, next) => {
       _id: user._id,
       name: user.name,
       email: user.email,
-      token
+      token,
     });
   } catch (error) {
     next(error);
@@ -45,7 +44,7 @@ export const loginUser = async (req, res, next) => {
         _id: user._id,
         name: user.name,
         email: user.email,
-        token
+        token,
       });
     } else {
       res.status(401).json({ message: 'Invalid email or password' });
@@ -148,10 +147,8 @@ export const resetPassword = async (req, res, next) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Hash and update new password
-    const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(password, salt);
-
+    // Assign raw password; hashing done automatically in User model's pre-save hook
+    user.password = password;
     await user.save();
 
     res.json({ message: 'Password reset successful' });
