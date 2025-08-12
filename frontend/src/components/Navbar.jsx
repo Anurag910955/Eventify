@@ -33,7 +33,7 @@ const Navbar = () => {
         >
           <li>
             <Link
-              to="/"
+              to="/home"
               className="hover:text-blue-600 transition duration-200"
               onClick={() => setIsMenuOpen(false)}
             >
