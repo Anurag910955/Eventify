@@ -1,5 +1,5 @@
 // src/App.js
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation,matchPath } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -23,13 +23,25 @@ import NotFound from './pages/NotFound';
 const Layout = () => {
   const location = useLocation();
 
-  // Paths where Navbar and Footer should be hidden
-  const hideLayout = 
-    location.pathname === "/" || 
-    location.pathname === "/register" ||  
-    location.pathname === "/forgot-password" || 
+ 
+  const noLayoutRoutes = [
+    "/",
+    "/register",
+    "/forgot-password",
+    "/reset-password/"
+  ];
+
+  const hideLayout =
+    noLayoutRoutes.includes(location.pathname) ||
     location.pathname.startsWith("/reset-password/") ||
-    location.pathname === "/404"; // We'll also hide for not found route
+    // Hide if NotFound page (no matching route)
+    ![
+      "/", "/register", "/forgot-password",
+      "/reset-password/:token", "/home", "/event/:id",
+      "/booking/:id", "/thank-you", "/admin-dashboard",
+      "/my-bookings", "/about", "/contact", "/services",
+      "/admin-login"
+    ].some(path => matchPath(path, location.pathname));
 
   return (
     <>
@@ -57,7 +69,7 @@ const Layout = () => {
             <Route path="/admin-login" element={<AdminLogin />} />
           </Route>
 
-          {/* Not Found route */}
+          {/* Not Found */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
@@ -65,6 +77,8 @@ const Layout = () => {
     </>
   );
 };
+
+
 
 function App() {
   return (
