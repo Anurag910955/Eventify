@@ -34,22 +34,27 @@ const ForgotPassword = () => {
   };
 
   // Step 2: Verify OTP
- const handleVerifyOtp = async (e) => {
-  e.preventDefault();
-  setError("");
-  try {
-    const { data } = await axios.post(
-      "https://mini-project-college.onrender.com/api/auth/verify-otp",
-      { email, otp }
-    );
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault();
+    setError("");
+    try {
+      console.log("Verifying OTP with:", { email, otp: otp.trim() });
 
-    const res = data.token; // capture backend token
-    window.location.href = `/reset-password/${res.data.token}`;
-  } catch (err) {
-    setError(err.response?.data?.message || "Invalid OTP");
-  }
-};
+      const { data } = await axios.post(
+        "https://mini-project-college.onrender.com/api/auth/verify-otp",
+        { email, otp: otp.trim() }
+      );
 
+      const token = data.token; // expecting backend response: { token: '...' }
+      if (token) {
+        window.location.href = `/reset-password/${token}`;
+      } else {
+        setError("Invalid response from server");
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || "Invalid OTP");
+    }
+  };
 
   // Step 3: Resend OTP
   const handleResendOtp = async () => {
@@ -125,12 +130,12 @@ const ForgotPassword = () => {
 
         <button
           type="submit"
-          disabled={otpSent && timer > 0 && !otp} // Prevent clicking too early unless entering OTP
+          disabled={otpSent && timer > 0 && !otp}
           className={`w-full mt-2 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-indigo-500 hover:to-blue-500 transition-all duration-300 text-white py-2 rounded-lg font-semibold shadow-md hover:shadow-lg ${
             otpSent && timer > 0 && !otp ? "opacity-50 cursor-not-allowed" : ""
           }`}
         >
-          {otpSent ? "Verify OTP" : timer > 0 ? "Send OTP" : "Send OTP"}
+          {otpSent ? "Verify OTP" : "Send OTP"}
         </button>
 
         {!otpSent && (
