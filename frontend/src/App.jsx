@@ -24,6 +24,7 @@ const Layout = () => {
   const location = useLocation();
   const hideLayout = location.pathname === "/" || 
     location.pathname === "/register" || 
+    location.pathname === "*" || 
     location.pathname === "/forgot-password" || 
     location.pathname.startsWith("/reset-password/");
 
