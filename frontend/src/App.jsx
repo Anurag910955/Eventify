@@ -17,6 +17,8 @@ import Services from './pages/Services';
 import AdminLogin from './pages/AdminLogin';
 import ScrollToTop from './components/ScrollToTop.jsx'; 
 import MyBookings from "./pages/MyBookings";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 const Layout = () => {
   const location = useLocation();
@@ -26,18 +28,19 @@ const Layout = () => {
     <>
       {!hideLayout && <Navbar />}
       <main className="content">
-      <ScrollToTop />
+        <ScrollToTop />
         <Routes>
           {/* Public routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/admin-login" element={<AdminLogin />} />
           <Route path="/admin-dashboard" element={<AdminDashboard />} />
           <Route path="/services" element={<Services />} /> 
           <Route path="/my-bookings" element={<MyBookings />} />
-
 
           {/* Protected routes */}
           <Route element={<ProtectedRoute />}>
