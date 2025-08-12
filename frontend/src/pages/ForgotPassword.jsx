@@ -34,16 +34,22 @@ const ForgotPassword = () => {
   };
 
   // Step 2: Verify OTP
-  const handleVerifyOtp = async (e) => {
-    e.preventDefault();
-    setError("");
-    try {
-      await axios.post("https://mini-project-college.onrender.com/api/auth/verify-otp", { email, otp });
-      window.location.href = `/reset-password/${resetToken}`; // Redirect to reset password page
-    } catch (err) {
-      setError(err.response?.data?.message || "Invalid OTP");
-    }
-  };
+ const handleVerifyOtp = async (e) => {
+  e.preventDefault();
+  setError("");
+  try {
+    const { data } = await axios.post(
+      "https://mini-project-college.onrender.com/api/auth/verify-otp",
+      { email, otp }
+    );
+
+    const resetToken = data.token; // capture backend token
+    window.location.href = `/reset-password/${resetToken}`;
+  } catch (err) {
+    setError(err.response?.data?.message || "Invalid OTP");
+  }
+};
+
 
   // Step 3: Resend OTP
   const handleResendOtp = async () => {
