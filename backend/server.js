@@ -32,8 +32,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Health check route
-app.get('*', (req, res) => {
-  res.redirect('/');
+app.get('/', (req, res) => {
   res.send('API is running...');
 });
 // Contact route
@@ -51,6 +50,14 @@ app.use('/api/verify-email', otpRoutes);
 // Error handling middleware
 app.use(errorHandler);
 
+// Catch-all for non-API routes to redirect to home
+app.get('*', (req, res) => {
+  if (!req.originalUrl.startsWith('/api')) {
+    res.redirect('/');
+  } else {
+    res.status(404).json({ message: 'Not Found' });
+  }
+});
 // Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
