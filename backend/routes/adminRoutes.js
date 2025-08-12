@@ -5,15 +5,23 @@ import Booking from '../models/Booking.js';
 const router = express.Router();
 
 //  Get all events with stats
+// routes/admin.js (or wherever admin events route is)
 router.get('/events', async (req, res) => {
   try {
     const events = await Event.find().sort({ createdAt: -1 });
 
     const eventsWithStats = await Promise.all(
       events.map(async (event) => {
-        const bookings = await Booking.find({ eventId: event._id });
-        const ticketsSold = bookings.reduce((sum, b) => sum + b.tickets, 0);
-        const totalAmount = ticketsSold * event.price;
+        // Query bookings using the 'event' field (matches your booking creation)
+        const bookings = await Booking.find({ event: event._id });
+
+        const ticketsSold = bookings.reduce((sum, b) => sum + (Number(b.tickets) || 0), 0);
+        // Use stored event.totalAmount if you update event on booking (recommended)
+        // But if you want to compute from bookings:
+        // const totalAmount = bookings.reduce((sum, b) => sum + (Number(b.totalPayment) || (Number(b.tickets)||0) * event.price), 0);
+
+        // Prefer returning the authoritative event totals from the Event doc:
+        const totalAmount = (event.totalAmount !== undefined) ? event.totalAmount : ticketsSold * event.price;
 
         return {
           ...event.toObject(),
@@ -25,9 +33,11 @@ router.get('/events', async (req, res) => {
 
     res.json(eventsWithStats);
   } catch (err) {
+    console.error('Failed to fetch admin events:', err);
     res.status(500).json({ message: 'Failed to fetch events', error: err.message });
   }
 });
+
 
 //  Create a new event 
 router.post('/events', async (req, res) => {
