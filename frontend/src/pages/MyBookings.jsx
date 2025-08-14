@@ -1,13 +1,15 @@
 import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom"; // ✅ Add this
 import { AuthContext } from "../context/AuthContext";
-import { CalendarDays, MapPin, Ticket, IndianRupee } from "lucide-react";
+import { CalendarDays, MapPin, Ticket, IndianRupee, ArrowRight } from "lucide-react"; // Added ArrowRight for icon
 
 const MyBookings = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate(); // ✅ hook for navigation
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -51,44 +53,56 @@ const MyBookings = () => {
         ) : error ? (
           <p className="text-center text-red-600 font-semibold">{error}</p>
         ) : bookings.length === 0 ? (
-          <p className="text-center text-gray-600 text-lg">You have no bookings yet.</p>
+          <p className="text-center text-gray-600 text-lg">
+            You have no bookings yet.
+          </p>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {bookings.map((booking) => (
               <div
                 key={booking._id}
-                className="bg-white border border-gray-200 rounded-2xl p-6 shadow-md hover:shadow-xl transition duration-300"
+                className="bg-white border border-gray-200 rounded-2xl p-6 shadow-md hover:shadow-xl transition duration-300 flex flex-col justify-between"
               >
-                <h3 className="text-2xl font-bold text-indigo-700 mb-3">
-                  {booking.event?.title || "Untitled Event"}
-                </h3>
+                <div>
+                  <h3 className="text-2xl font-bold text-indigo-700 mb-3">
+                    {booking.event?.title || "Untitled Event"}
+                  </h3>
 
-                <div className="space-y-2 text-gray-700 text-sm">
-                  <p className="flex items-center gap-2">
-                    <CalendarDays className="w-5 h-5 text-blue-500" />
-                    <span>
-                      {booking.event?.date
-                        ? new Date(booking.event.date).toLocaleDateString()
-                        : "N/A"}
-                    </span>
-                  </p>
-                  <p className="flex items-center gap-2">
-                    <MapPin className="w-5 h-5 text-green-500" />
-                    <span>{booking.event?.location || "N/A"}</span>
-                  </p>
-                  <p className="flex items-center gap-2">
-                    <Ticket className="w-5 h-5 text-pink-500" />
-                    <span>Tickets Booked: {booking.tickets}</span>
-                  </p>
-                  <p className="flex items-center gap-2">
-                    <IndianRupee className="w-5 h-5 text-yellow-600" />
-                    <span>Total Payment: ₹{booking.totalPayment || 0}</span>
-                  </p>
-                  <p className="text-gray-500 mt-1">
-                    Booked on:{" "}
-                    {new Date(booking.createdAt).toLocaleDateString()}
-                  </p>
+                  <div className="space-y-2 text-gray-700 text-sm">
+                    <p className="flex items-center gap-2">
+                      <CalendarDays className="w-5 h-5 text-blue-500" />
+                      <span>
+                        {booking.event?.date
+                          ? new Date(booking.event.date).toLocaleDateString()
+                          : "N/A"}
+                      </span>
+                    </p>
+                    <p className="flex items-center gap-2">
+                      <MapPin className="w-5 h-5 text-green-500" />
+                      <span>{booking.event?.location || "N/A"}</span>
+                    </p>
+                    <p className="flex items-center gap-2">
+                      <Ticket className="w-5 h-5 text-pink-500" />
+                      <span>Tickets Booked: {booking.tickets}</span>
+                    </p>
+                    <p className="flex items-center gap-2">
+                      <IndianRupee className="w-5 h-5 text-yellow-600" />
+                      <span>Total Payment: ₹{booking.totalPayment || 0}</span>
+                    </p>
+                    <p className="text-gray-500 mt-1">
+                      Booked on:{" "}
+                      {new Date(booking.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
                 </div>
+
+                {/* ✅ Button to view event details */}
+                <button
+                  onClick={() => navigate(`/event/${booking.event?._id}`)}
+                  className="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition"
+                >
+                  View Event <ArrowRight className="w-4 h-4" />
+                </button>
               </div>
             ))}
           </div>
