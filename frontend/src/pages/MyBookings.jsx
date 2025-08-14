@@ -99,7 +99,7 @@ const MyBookings = () => {
                 {/* ✅ Button to view event details */}
               <button
   onClick={() => navigate(`/event/${booking.event?._id}`)}
-  className="mt-4 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white px-6 py-2 rounded-full flex items-center gap-2 font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-transform duration-300 ease-out hover:from-pink-500 hover:to-indigo-500 w-auto"
+  className="mt-4 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white px-6 py-2 rounded-full flex items-center gap-2 font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-transform duration-300 ease-out hover:from-pink-500 hover:to-indigo-500 w-fit"
 >
   View Event <ArrowRight className="w-4 h-4" />
 </button>
