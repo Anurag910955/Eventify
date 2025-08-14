@@ -40,7 +40,7 @@ const Register = () => {
 
       setSuccess("Registration successful! Redirecting to login...");
       setTimeout(() => {
-        navigate("/login");
+        navigate("/");
       }, 2000);
     } catch (err) {
       console.error(err);
