@@ -23,7 +23,7 @@ const app = express();
 
 // CORS configuration
 app.use(cors({
-  origin: 'https://mini-project-college-68xx.vercel.app', 
+  origin: 'https://eventifyevents.vercel.app', 
   credentials: true
 }));
 
