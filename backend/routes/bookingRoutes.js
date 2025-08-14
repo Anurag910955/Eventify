@@ -8,6 +8,6 @@ const router = express.Router();
 router.post('/', protect, bookEvent);
 
 // GET /api/bookings/my-bookings 
-router.get('/my-bookings', protect, getUserBookings);z
+router.get('/my-bookings', protect, getUserBookings);
 
 export default router;
