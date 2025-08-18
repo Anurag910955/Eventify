@@ -45,6 +45,19 @@ const MyBookings = () => {
         <h2 className="text-4xl font-bold text-blue-700 text-center mb-10 drop-shadow">
           🎫 My Bookings
         </h2>
+        <input
+  type="text"
+  placeholder="Search by event..."
+  className="border px-4 py-2 rounded-lg mb-6 w-full"
+  onChange={(e) =>
+    setBookings(
+      bookings.filter((b) =>
+        b.event?.title.toLowerCase().includes(e.target.value.toLowerCase())
+      )
+    )
+  }
+/>
+
 
         {loading ? (
           <p className="text-center text-gray-500 animate-pulse">
@@ -96,7 +109,7 @@ const MyBookings = () => {
                   </div>
                 </div>
 
-                {/* ✅ Button to view event details */}
+                {/* Button to view event details */}
               <button
   onClick={() => navigate(`/event/${booking.event?._id}`)}
   className="mt-4 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white px-6 py-2 rounded-full flex items-center gap-2 font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-transform duration-300 ease-out hover:from-pink-500 hover:to-indigo-500 w-fit"
