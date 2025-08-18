@@ -30,7 +30,7 @@ const ThankYou = () => {
 
     <Link
       to="/home"
-      className="inline-block bg-green-300 text-white font-semibold px-6 py-3 rounded-xl hover:bg-green-600 transition duration-300 shadow-md"
+      className="inline-block bg-green-300 text-white font-semibold px-6 py-3 rounded-xl hover:bg-green-400 transition duration-300 shadow-md"
     >
       ⬅ Back to Home
     </Link>
