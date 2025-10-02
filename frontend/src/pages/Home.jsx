@@ -8,7 +8,7 @@ const Home = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const res = await fetch("https://mini-project-college.onrender.com/api/events");
+        const res = await fetch("https://eventify-7v8x.onrender.com/api/events");
         const data = await res.json();
         setEvents(data);
         setLoading(false);

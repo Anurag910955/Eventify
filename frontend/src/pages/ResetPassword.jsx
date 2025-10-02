@@ -19,7 +19,7 @@ const ResetPassword = () => {
 
     try {
       const res = await axios.post(
-        `https://mini-project-college.onrender.com/api/auth/reset-password/${token}`,
+        `https://eventify-7v8x.onrender.com/api/auth/reset-password/${token}`,
         { password }
       );
       setMessage(res.data.message);

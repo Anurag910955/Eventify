@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: 'https://mini-project-college.onrender.com',
+  baseURL: 'https://eventify-7v8x.onrender.com',
   headers: {
     'Content-Type': 'application/json',
   },

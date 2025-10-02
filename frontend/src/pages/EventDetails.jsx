@@ -13,7 +13,7 @@ const EventDetails = () => {
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const res = await fetch(`https://mini-project-college.onrender.com/api/events/${id}`);
+        const res = await fetch(`https://eventify-7v8x.onrender.com/api/events/${id}`);
         if (!res.ok) {
           throw new Error("Event not found");
         }

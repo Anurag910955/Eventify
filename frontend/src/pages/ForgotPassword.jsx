@@ -27,7 +27,7 @@ const ForgotPassword = () => {
     setLoading(true);
     try {
       await axios.post(
-        "https://mini-project-college.onrender.com/api/auth/forgot-password",
+        "https://eventify-7v8x.onrender.com/api/auth/forgot-password",
         { email }
       );
       setOtpSent(true);
@@ -44,7 +44,7 @@ const ForgotPassword = () => {
     setError("");
     try {
       const { data } = await axios.post(
-        "https://mini-project-college.onrender.com/api/auth/verify-otp",
+        "https://eventify-7v8x.onrender.com/api/auth/verify-otp",
         { email, otp: otp.trim() }
       );
       const token = data.token;
@@ -63,7 +63,7 @@ const ForgotPassword = () => {
     setLoading(true);
     try {
       await axios.post(
-        "https://mini-project-college.onrender.com/api/auth/forgot-password",
+        "https://eventify-7v8x.onrender.com/api/auth/forgot-password",
         { email }
       );
       setTimer(60);

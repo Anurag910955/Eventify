@@ -15,7 +15,7 @@ const MyBookings = () => {
     const fetchBookings = async () => {
       try {
         const response = await axios.get(
-          "https://mini-project-college.onrender.com/api/bookings/my-bookings",
+          "https://eventify-7v8x.onrender.com/api/bookings/my-bookings",
           {
             headers: {
               Authorization: `Bearer ${user?.token}`,

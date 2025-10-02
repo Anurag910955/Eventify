@@ -12,7 +12,7 @@ const AdminLogin = () => {
     setError('');
 
     try {
-      const res = await fetch('https://mini-project-college.onrender.com/api/admin/login', {
+      const res = await fetch('https://eventify-7v8x.onrender.com/api/admin/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
