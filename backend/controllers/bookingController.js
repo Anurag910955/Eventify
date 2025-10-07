@@ -3,20 +3,20 @@ import dotenv from 'dotenv';
 dotenv.config();
 import fs from 'fs';
 import path from 'path';
+import os from 'os'; // ✅ added for temp directory
 import PDFDocument from 'pdfkit';
 import QRCode from 'qrcode';
 import Booking from '../models/Booking.js';
 import Event from '../models/Event.js';
 import nodemailer from 'nodemailer';
 
-// Ensure ticket folder exists
-const TICKET_DIR = path.join(process.cwd(), 'tickets');
+// Use system temp directory for tickets (Vercel-compatible)
+const TICKET_DIR = path.join(os.tmpdir(), 'tickets');
 if (!fs.existsSync(TICKET_DIR)) {
-  fs.mkdirSync(TICKET_DIR);
+  fs.mkdirSync(TICKET_DIR, { recursive: true });
 }
 
 // POST /api/bookings — Create a booking and send PDF ticket via email
-// controllers/bookingController.js (only the bookEvent function)
 export const bookEvent = async (req, res) => {
   try {
     const { eventId, name, email, tickets, totalPayment, razorpayPaymentId } = req.body;
@@ -39,8 +39,7 @@ export const bookEvent = async (req, res) => {
 
     const createdBooking = await booking.save();
 
-    // *** Update event stats immediately after booking saved ***
-    // Use incoming totalPayment (safer if price can vary) or fallback to tickets * event.price
+    // Update event stats
     const paidAmount = typeof totalPayment === 'number' && !Number.isNaN(totalPayment)
       ? totalPayment
       : (Number(tickets) || 0) * (Number(event.price) || 0);
@@ -49,7 +48,7 @@ export const bookEvent = async (req, res) => {
     event.totalAmount = (event.totalAmount || 0) + paidAmount;
     await event.save();
 
-    // --- existing PDF/QRCode/email generation (unchanged) ---
+    // --- PDF/QRCode generation ---
     const qrData = `Booking ID: ${createdBooking._id}\nName: ${name}\nEvent: ${event.title}`;
     const qrImagePath = path.join(TICKET_DIR, `qr-${createdBooking._id}.png`);
     await QRCode.toFile(qrImagePath, qrData);
@@ -58,7 +57,7 @@ export const bookEvent = async (req, res) => {
     const doc = new PDFDocument({ size: 'A6', margin: 30 });
     doc.pipe(fs.createWriteStream(pdfPath));
 
-    // (your PDF content...)
+    // PDF content
     doc.fontSize(18).font('Helvetica-Bold').fillColor('#4a4a4a').text('Eventify', { align: 'center' });
     doc.fontSize(10).text('Your Ticket to an Amazing Event', { align: 'center' });
     doc.moveDown(2);
@@ -86,7 +85,7 @@ export const bookEvent = async (req, res) => {
     doc.image(qrImagePath, qrX, doc.y + 5, { fit: [qrWidth, qrWidth] });
     doc.end();
 
-    // email (your existing transporter + mailOptions)
+    // --- Send email ---
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -107,6 +106,8 @@ export const bookEvent = async (req, res) => {
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) console.error('Email failed:', error);
       else console.log('Email sent:', info.response);
+
+      // Clean up temp files
       fs.unlink(pdfPath, () => {});
       fs.unlink(qrImagePath, () => {});
     });
