@@ -27,7 +27,7 @@ const ForgotPassword = () => {
     setLoading(true);
     try {
       await axios.post(
-        "https://eventify-7v8x.onrender.com/api/auth/forgot-password",
+        "http://localhost:5000/api/auth/forgot-password",
         { email }
       );
       setOtpSent(true);
@@ -44,7 +44,7 @@ const ForgotPassword = () => {
     setError("");
     try {
       const { data } = await axios.post(
-        "https://eventify-7v8x.onrender.com/api/auth/verify-otp",
+        "http://localhost:5000/api/auth/verify-otp",
         { email, otp: otp.trim() }
       );
       const token = data.token;
@@ -63,7 +63,7 @@ const ForgotPassword = () => {
     setLoading(true);
     try {
       await axios.post(
-        "https://eventify-7v8x.onrender.com/api/auth/forgot-password",
+        "http://localhost:5000/api/auth/forgot-password",
         { email }
       );
       setTimer(60);
@@ -150,7 +150,7 @@ const ForgotPassword = () => {
         {!otpSent && (
           <p className="text-center text-gray-700 text-sm mt-8">
             Remembered your password?{" "}
-            <Link to="/login" className="text-blue-600 hover:underline font-semibold">
+            <Link to="/" className="text-blue-600 hover:underline font-semibold">
               Login here
             </Link>
           </p>

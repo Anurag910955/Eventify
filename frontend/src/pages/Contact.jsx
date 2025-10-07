@@ -12,7 +12,7 @@ const Contact = () => {
   e.preventDefault();
 
   try {
-    const res = await fetch("https://eventify-7v8x.onrender.com/api/contact", {
+    const res = await fetch("http://localhost:5000/api/contact", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
