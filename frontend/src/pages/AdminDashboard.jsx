@@ -30,7 +30,7 @@ const AdminDashboard = () => {
 
   const fetchEvents = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/admin/events');
+      const res = await fetch('https://eventify-olive-seven.vercel.app/api/admin/events');
       const data = await res.json();
       setEvents(data);
     } catch (error) {
@@ -57,8 +57,8 @@ const AdminDashboard = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const url = editingId
-      ? `http://localhost:5000/api/admin/events/${editingId}`
-      : 'http://localhost:5000/api/admin/events';
+      ? `https://eventify-olive-seven.vercel.app/api/admin/events/${editingId}`
+      : 'https://eventify-olive-seven.vercel.app/api/admin/events';
     const method = editingId ? 'PUT' : 'POST';
 
     try {
@@ -109,7 +109,7 @@ const AdminDashboard = () => {
     if (!confirmDelete) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/events/${id}`, {
+      const res = await fetch(`https://eventify-olive-seven.vercel.app/api/admin/events/${id}`, {
         method: 'DELETE',
       });
 

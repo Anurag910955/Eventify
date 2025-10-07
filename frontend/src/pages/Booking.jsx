@@ -30,7 +30,7 @@ const Booking = () => {
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/events/${id}`);
+        const res = await fetch(`https://eventify-olive-seven.vercel.app/api/events/${id}`);
         if (!res.ok) throw new Error("Failed to fetch event data");
         const event = await res.json();
         setTicketPrice(Number(event.price));
@@ -69,7 +69,7 @@ const Booking = () => {
   const handleSendOtp = async () => {
     setSendingOtp(true);
     try {
-      const res = await fetch("http://localhost:5000/api/verify-email/send-otp", {
+      const res = await fetch("https://eventify-olive-seven.vercel.app/api/verify-email/send-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: formData.email }),
@@ -87,7 +87,7 @@ const Booking = () => {
   const handleVerifyOtp = async () => {
     setVerifyingOtp(true);
     try {
-      const res = await fetch("http://localhost:5000/api/verify-email/confirm-otp", {
+      const res = await fetch("https://eventify-olive-seven.vercel.app/api/verify-email/confirm-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: formData.email, otp }),
@@ -104,7 +104,7 @@ const Booking = () => {
 
   const handlePayment = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/payment/create-order", {
+      const res = await fetch("https://eventify-olive-seven.vercel.app/api/payment/create-order", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -156,7 +156,7 @@ const Booking = () => {
       return;
     }
     try {
-      const res = await fetch("http://localhost:5000/api/bookings", {
+      const res = await fetch("https://eventify-olive-seven.vercel.app/api/bookings", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -13,7 +13,7 @@ const EventDetails = () => {
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/events/${id}`);
+        const res = await fetch(`https://eventify-olive-seven.vercel.app/api/events/${id}`);
         if (!res.ok) {
           throw new Error("Event not found");
         }

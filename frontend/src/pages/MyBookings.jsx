@@ -15,7 +15,7 @@ const MyBookings = () => {
     const fetchBookings = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/bookings/my-bookings",
+          "https://eventify-olive-seven.vercel.app/api/bookings/my-bookings",
           {
             headers: {
               Authorization: `Bearer ${user?.token}`,

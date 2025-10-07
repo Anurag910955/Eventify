@@ -27,7 +27,7 @@ const ForgotPassword = () => {
     setLoading(true);
     try {
       await axios.post(
-        "http://localhost:5000/api/auth/forgot-password",
+        "https://eventify-olive-seven.vercel.app/api/auth/forgot-password",
         { email }
       );
       setOtpSent(true);
@@ -44,7 +44,7 @@ const ForgotPassword = () => {
     setError("");
     try {
       const { data } = await axios.post(
-        "http://localhost:5000/api/auth/verify-otp",
+        "https://eventify-olive-seven.vercel.app/api/auth/verify-otp",
         { email, otp: otp.trim() }
       );
       const token = data.token;
@@ -63,7 +63,7 @@ const ForgotPassword = () => {
     setLoading(true);
     try {
       await axios.post(
-        "http://localhost:5000/api/auth/forgot-password",
+        "https://eventify-olive-seven.vercel.app/api/auth/forgot-password",
         { email }
       );
       setTimer(60);
