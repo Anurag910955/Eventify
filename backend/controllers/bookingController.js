@@ -3,14 +3,14 @@ import dotenv from 'dotenv';
 dotenv.config();
 import fs from 'fs';
 import path from 'path';
-import os from 'os'; // ✅ added for temp directory
+import os from 'os';
 import PDFDocument from 'pdfkit';
 import QRCode from 'qrcode';
 import Booking from '../models/Booking.js';
 import Event from '../models/Event.js';
 import nodemailer from 'nodemailer';
 
-// Use system temp directory for tickets (Vercel-compatible)
+// Vercel-safe temporary directory
 const TICKET_DIR = path.join(os.tmpdir(), 'tickets');
 if (!fs.existsSync(TICKET_DIR)) {
   fs.mkdirSync(TICKET_DIR, { recursive: true });
@@ -22,9 +22,7 @@ export const bookEvent = async (req, res) => {
     const { eventId, name, email, tickets, totalPayment, razorpayPaymentId } = req.body;
 
     const event = await Event.findById(eventId);
-    if (!event) {
-      return res.status(404).json({ message: 'Event not found' });
-    }
+    if (!event) return res.status(404).json({ message: 'Event not found' });
 
     // create booking
     const booking = new Booking({
@@ -94,25 +92,31 @@ export const bookEvent = async (req, res) => {
       },
     });
 
-    const emailHtml = `...`; // keep your current HTML template
-    const mailOptions = {
+    const emailHtml = `
+      <div style="font-family: Arial, sans-serif; color: #333;">
+        <h2>🎉 Your Ticket for ${event.title}</h2>
+        <p>Hi ${name},</p>
+        <p>Thank you for booking. Please find your ticket attached as PDF.</p>
+        <p><strong>Booking ID:</strong> ${createdBooking._id}</p>
+        <p><strong>Tickets:</strong> ${tickets}</p>
+        <p><strong>Total Paid:</strong> INR ${paidAmount}</p>
+        <p>See you at the event!</p>
+      </div>
+    `;
+
+    await transporter.sendMail({
       from: process.env.EMAIL_USER || 'eventifyprivatelimited13@gmail.com',
       to: email,
-      subject: `🎉 Your Ticket for ${event.title}`,
+      subject: `🎟 Your Ticket for ${event.title}`,
       html: emailHtml,
       attachments: [{ filename: `ticket-${createdBooking._id}.pdf`, path: pdfPath }]
-    };
-
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) console.error('Email failed:', error);
-      else console.log('Email sent:', info.response);
-
-      // Clean up temp files
-      fs.unlink(pdfPath, () => {});
-      fs.unlink(qrImagePath, () => {});
     });
 
-    return res.status(201).json({ message: 'Booking successful!', createdBooking });
+    // Clean up temp files
+    fs.unlink(pdfPath, () => {});
+    fs.unlink(qrImagePath, () => {});
+
+    return res.status(201).json({ message: 'Booking successful! Ticket sent via email.', createdBooking });
   } catch (error) {
     console.error("Booking failed:", error);
     return res.status(500).json({ message: 'Booking failed', error: error.message });
