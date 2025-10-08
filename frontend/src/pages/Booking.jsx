@@ -202,7 +202,7 @@ const Booking = () => {
                 value={formData.name}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 rounded-2xl border"
+                className="w-full px-4 py-3 rounded-2xl border text-black"
               />
             </div>
 
@@ -214,14 +214,14 @@ const Booking = () => {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 rounded-2xl border"
+                className="w-full px-4 py-3 rounded-2xl border text-black"
               />
               {!otpSent || otpTimer === 0 ? (
                 <button
                   type="button"
                   onClick={handleSendOtp}
                   disabled={sendingOtp}
-                  className="mt-2 px-4 py-2 bg-blue-600 rounded-xl"
+                  className="mt-2 px-4 py-2 bg-blue-600 rounded-xl text-black"
                 >
                   {sendingOtp ? "Sending OTP..." : "Send OTP"}
                 </button>
@@ -232,13 +232,13 @@ const Booking = () => {
                     value={otp}
                     onChange={(e) => setOtp(e.target.value)}
                     placeholder="Enter OTP"
-                    className="w-full px-4 py-2 rounded-xl border"
+                    className="w-full px-4 py-2 rounded-xl border text-black"
                   />
                   <button
                     type="button"
                     onClick={handleVerifyOtp}
                     disabled={verifyingOtp}
-                    className="mt-2 px-4 py-2 bg-green-600 rounded-xl"
+                    className="mt-2 px-4 py-2 bg-green-600 rounded-xl "
                   >
                     {verifyingOtp ? "Verifying..." : "Verify OTP"}
                   </button>
@@ -262,7 +262,7 @@ const Booking = () => {
                     onChange={handleChange}
                     min="1"
                     required
-                    className="w-full px-4 py-3 rounded-2xl border"
+                    className="w-full px-4 py-3 rounded-2xl border text-black"
                   />
                 </div>
 
@@ -272,7 +272,7 @@ const Booking = () => {
                     type="text"
                     value={isNaN(totalPayment) ? "" : totalPayment}
                     readOnly
-                    className="w-full px-4 py-3 rounded-2xl bg-gray-100 border cursor-not-allowed"
+                    className="w-full px-4 py-3 rounded-2xl bg-gray-100 border cursor-not-allowed text-black"
                   />
                 </div>
 
@@ -280,7 +280,7 @@ const Booking = () => {
                   <button
                     type="button"
                     onClick={handlePayment}
-                    className="w-full mt-4 py-3 bg-purple-600  font-bold rounded-2xl"
+                    className="w-full mt-4 py-3 bg-purple-600  font-bold rounded-2xl text-black"
                   >
                     Pay with Razorpay
                   </button>
