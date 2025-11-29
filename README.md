@@ -2,9 +2,9 @@
 
 Eventify is a modern, full-stack event booking web application where users can browse, book, and receive stylish PDF tickets for events. It includes an admin dashboard, payment integration, OTP verification, and email notifications — all in a production-ready MERN stack project.
 
-🚀 Features
+ Features
 
-👤 User Features
+User Features
 - Browse and view all available events
 - Secure booking with Razorpay payment gateway (test mode)
 - OTP verification via email before booking
@@ -12,14 +12,14 @@ Eventify is a modern, full-stack event booking web application where users can b
 - Ticket sent via email after successful booking
 - View "My Bookings" for past and upcoming events
 
-🛠️ Admin Features
+ Admin Features
 - Admin login with access control
 - Create, update, or delete events
 - View ticket booking statistics on a graph dashboard
 - Email-based contact form to receive user messages
 
 
-🧰 Tech Stack
+Tech Stack
 
 # Frontend
 - React.js + Tailwind CSS
@@ -33,47 +33,46 @@ Eventify is a modern, full-stack event booking web application where users can b
 - Nodemailer for emails
 - PDFKit + qrcode for generating tickets
 
-💳 Payment Flow (Test Mode)
+Payment Flow (Test Mode)
 
 - Razorpay test API is integrated
 - Users make payments using test card details
 - Payment ID is verified and saved with the booking
 - Ticket is generated after payment confirmation
 
-🚀 Deployment
+ Deployment
 Frontend: Deployed on Vercel
 Backend: Deployed on Render
 
-📧 Email & Ticketing Flow
+Email & Ticketing Flow
 
 - Nodemailer sends email from a Gmail service
 - OTP verification before booking
 - Ticket is sent as a stylish PDF attachment
 - Ticket includes event details and a scannable QR code
 
- 🔐 OTP System
+  OTP System
 
 - Email OTP is sent to users before booking
 - OTP expires after 5 minutes
 - Option to resend OTP after 2 minutes
 
 
-⚙️ Setup Instructions
+Setup Instructions
 
- 🖥️ Backend Setup
+  Backend Setup
 
 cd backend
 npm install
 npm run dev
 
-🌐 Frontend Setup
+ Frontend Setup
 
 cd frontend
 npm install
 npm start
 
-📄 License
-This project is for educational and demonstration purposes. You can customize and reuse it with credit.
+
 
 Screenshots
 
