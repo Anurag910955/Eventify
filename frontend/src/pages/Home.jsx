@@ -58,7 +58,7 @@ const Home = () => {
   <section className="max-w-7xl mx-auto px-4 pt-16 pb-24">
     <h2 className="text-4xl font-bold text-center text-blue-700 mb-12 relative">
       Upcoming Events
-      <span className="block w-20 h-1 bg-blue-500 mx-auto mt-2 rounded-full" />
+      
     </h2>
 
     {loading ? (
