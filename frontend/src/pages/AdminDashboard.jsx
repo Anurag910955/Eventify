@@ -56,10 +56,7 @@ const AdminDashboard = () => {
     totalAmount: e.totalAmount || 0,
   }));
 
-  const predData = [
-    { name: 'Tickets', current: totalBookings, predicted: predictedSales },
-    { name: 'Revenue (÷10)', current: Math.round(totalRevenue / 10), predicted: Math.round(predictedRevenue / 10) },
-  ];
+ 
 
   const showMessage = (text, type = 'success') => {
     setMessage(text);
@@ -216,17 +213,40 @@ const AdminDashboard = () => {
                 <p className="text-xl font-semibold text-green-700">₹{predictedRevenue.toLocaleString('en-IN')}</p>
               </div>
             </div>
-            <ResponsiveContainer width="100%" height={160}>
-              <BarChart data={predData} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis dataKey="name" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} />
-                <Tooltip />
-                <Legend wrapperStyle={{ fontSize: 11 }} />
-                <Bar dataKey="current" fill="#378ADD" name="Current" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="predicted" fill="#1D9E75" name="Predicted" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+<div className="grid grid-cols-2 gap-4">
+  <div>
+    <p className="text-xs text-gray-400 text-center mb-1">Tickets</p>
+    <ResponsiveContainer width="100%" height={130}>
+      <BarChart
+        data={[{ name: 'Tickets', current: totalBookings, predicted: predictedSales }]}
+        margin={{ top: 5, right: 10, left: -20, bottom: 5 }}
+      >
+        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+        <XAxis dataKey="name" tick={{ fontSize: 11 }} />
+        <YAxis tick={{ fontSize: 11 }} />
+        <Tooltip />
+        <Bar dataKey="current" fill="#378ADD" name="Current" radius={[4, 4, 0, 0]} />
+        <Bar dataKey="predicted" fill="#1D9E75" name="Predicted" radius={[4, 4, 0, 0]} />
+      </BarChart>
+    </ResponsiveContainer>
+  </div>
+  <div>
+    <p className="text-xs text-gray-400 text-center mb-1">Revenue (₹)</p>
+    <ResponsiveContainer width="100%" height={130}>
+      <BarChart
+        data={[{ name: 'Revenue', current: totalRevenue, predicted: predictedRevenue }]}
+        margin={{ top: 5, right: 10, left: -10, bottom: 5 }}
+      >
+        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+        <XAxis dataKey="name" tick={{ fontSize: 11 }} />
+        <YAxis tick={{ fontSize: 11 }} />
+        <Tooltip />
+        <Bar dataKey="current" fill="#378ADD" name="Current" radius={[4, 4, 0, 0]} />
+        <Bar dataKey="predicted" fill="#1D9E75" name="Predicted" radius={[4, 4, 0, 0]} />
+      </BarChart>
+    </ResponsiveContainer>
+  </div>
+</div>
           </div>
         </div>
 
