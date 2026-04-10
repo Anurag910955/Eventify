@@ -1,43 +1,87 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-  PieChart, Pie, Cell
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
+  ResponsiveContainer, PieChart, Pie, Cell
 } from 'recharts';
+
+const COLORS = ['#378ADD', '#1D9E75', '#BA7517', '#E24B4A', '#7F77DD', '#D85A30'];
+
+const truncate = (s, n = 18) => s && s.length > n ? s.slice(0, n) + '…' : s;
+
+const Toast = ({ message, type }) => {
+  if (!message) return null;
+  const base = 'fixed top-4 right-4 z-50 px-5 py-3 rounded-xl text-sm font-medium shadow-lg transition-all duration-300';
+  const color = type === 'success'
+    ? 'bg-green-50 text-green-700 border border-green-200'
+    : 'bg-red-50 text-red-700 border border-red-200';
+  return <div className={`${base} ${color}`}>{message}</div>;
+};
+
+const MetricCard = ({ label, value, sub, color }) => (
+  <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+    <p className="text-xs text-gray-400 mb-1 uppercase tracking-wide">{label}</p>
+    <p className={`text-2xl font-semibold ${color}`}>{value}</p>
+    {sub && <p className="text-xs text-gray-400 mt-1">{sub}</p>}
+  </div>
+);
+
+const NavItem = ({ icon, label, active, onClick }) => (
+  <button
+    onClick={onClick}
+    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${
+      active
+        ? 'bg-blue-50 text-blue-700 font-medium'
+        : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800'
+    }`}
+  >
+    <span className="text-base">{icon}</span>
+    {label}
+  </button>
+);
 
 const AdminDashboard = () => {
   const [events, setEvents] = useState([]);
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    date: '',
-    time: '',
-    location: '',
-    price: '',
-    image: '',
+    title: '', description: '', date: '', time: '',
+    location: '', price: '', image: '',
   });
   const [editingId, setEditingId] = useState(null);
-
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('');
+  const [activeNav, setActiveNav] = useState('overview');
+  const formRef = useRef(null);
 
   const totalRevenue = events.reduce((sum, e) => sum + (e.totalAmount || 0), 0);
-const totalBookings = events.reduce((sum, e) => sum + (e.ticketsSold || 0), 0);
+  const totalBookings = events.reduce((sum, e) => sum + (e.ticketsSold || 0), 0);
+  const upcomingEvents = events.filter(e => new Date(e.date) > new Date()).length;
+  const repeatUsers = 40;
+  const predictedSales = Math.round(totalBookings * 1.2);
+  const predictedRevenue = Math.round(totalRevenue * 1.2);
+  const topEvents = [...events].sort((a, b) => (b.ticketsSold || 0) - (a.ticketsSold || 0)).slice(0, 5);
 
-const upcomingEvents = events.filter(e => new Date(e.date) > new Date()).length;
+  const pieData = events.map((e, i) => ({
+    name: truncate(e.title, 15),
+    value: e.ticketsSold || 0,
+    color: COLORS[i % COLORS.length],
+  }));
 
-// Dummy repeat users (later connect backend)
-const repeatUsers = 40;
+  const barData = events.map(e => ({
+    name: truncate(e.title, 15),
+    ticketsSold: e.ticketsSold || 0,
+    totalAmount: e.totalAmount || 0,
+  }));
+
+  const predData = [
+    { name: 'Tickets', current: totalBookings, predicted: predictedSales },
+    { name: 'Revenue (÷10)', current: Math.round(totalRevenue / 10), predicted: Math.round(predictedRevenue / 10) },
+  ];
 
   const showMessage = (text, type = 'success') => {
     setMessage(text);
     setMessageType(type);
-    setTimeout(() => {
-      setMessage('');
-      setMessageType('');
-    }, 3000);
+    setTimeout(() => { setMessage(''); setMessageType(''); }, 3000);
   };
-const predictedSales = Math.round(totalBookings * 1.2);
-const predictedRevenue = Math.round(totalRevenue * 1.2);
+
   const fetchEvents = async () => {
     try {
       const res = await fetch('https://eventify-olive-seven.vercel.app/api/admin/events');
@@ -49,17 +93,10 @@ const predictedRevenue = Math.round(totalRevenue * 1.2);
     }
   };
 
-  const topEvents = [...events]
-  .sort((a, b) => (b.ticketsSold || 0) - (a.ticketsSold || 0))
-  .slice(0, 5);
-
   useEffect(() => {
     fetchEvents();
-
-    // ✅ Refetch periodically to get latest bookings without manual refresh
-    const intervalId = setInterval(fetchEvents, 5000); // every 5 seconds
+    const intervalId = setInterval(fetchEvents, 5000);
     return () => clearInterval(intervalId);
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -67,39 +104,22 @@ const predictedRevenue = Math.round(totalRevenue * 1.2);
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
-  const pieData = events.map(e => ({
-  name: e.title.length > 15 ? e.title.slice(0, 15) + '…' : e.title,
-  value: e.ticketsSold || 0
-}));
-  const COLORS = ['#60a5fa', '#34d399', '#fbbf24', '#f87171', '#a78bfa', '#fb923c'];
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const url = editingId
       ? `https://eventify-olive-seven.vercel.app/api/admin/events/${editingId}`
       : 'https://eventify-olive-seven.vercel.app/api/admin/events';
     const method = editingId ? 'PUT' : 'POST';
-
     try {
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
-
       if (!res.ok) throw new Error('Failed to save event');
-
-      const msg = editingId ? 'Event updated successfully!' : 'Event created successfully!';
-      showMessage(msg, 'success');
-
-      setFormData({
-        title: '',
-        description: '',
-        date: '',
-        time: '',
-        location: '',
-        price: '',
-        image: '',
-      });
+      showMessage(editingId ? 'Event updated successfully!' : 'Event created successfully!', 'success');
+      setFormData({ title: '', description: '', date: '', time: '', location: '', price: '', image: '' });
       setEditingId(null);
       fetchEvents();
     } catch (error) {
@@ -119,20 +139,14 @@ const predictedRevenue = Math.round(totalRevenue * 1.2);
       image: event.image,
     });
     setEditingId(event._id);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    formRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const handleDelete = async (id) => {
-    const confirmDelete = window.confirm('Are you sure you want to delete this event?');
-    if (!confirmDelete) return;
-
+    if (!window.confirm('Are you sure you want to delete this event?')) return;
     try {
-      const res = await fetch(`https://eventify-olive-seven.vercel.app/api/admin/events/${id}`, {
-        method: 'DELETE',
-      });
-
+      const res = await fetch(`https://eventify-olive-seven.vercel.app/api/admin/events/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Failed to delete event');
-
       showMessage('Event deleted successfully!', 'success');
       fetchEvents();
     } catch (error) {
@@ -141,279 +155,298 @@ const predictedRevenue = Math.round(totalRevenue * 1.2);
     }
   };
 
+  const cancelEdit = () => {
+    setFormData({ title: '', description: '', date: '', time: '', location: '', price: '', image: '' });
+    setEditingId(null);
+  };
+
+  const navItems = [
+    { id: 'overview', icon: '⊞', label: 'Overview' },
+    { id: 'events', icon: '☰', label: 'All Events' },
+    { id: 'upcoming', icon: '◷', label: 'Upcoming' },
+    { id: 'analytics', icon: '▣', label: 'Analytics' },
+  ];
+
   return (
-    <div className="w-screen min-h-screen px-4 py-10 bg-gradient-to-br from-blue-50 to-white">
-      <h1 className="text-5xl font-extrabold text-center mb-12 text-blue-700 drop-shadow-lg tracking-tight">
-        Admin Dashboard
-      </h1>
+    <div className="flex w-screen min-h-screen bg-gray-50 font-sans">
+      <Toast message={message} type={messageType} />
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
-  <div className="bg-white p-6 rounded-2xl shadow">
-    <h4>Total Revenue</h4>
-    <p className="text-2xl font-bold text-green-600">₹{totalRevenue}</p>
-  </div>
-
-  <div className="bg-white p-6 rounded-2xl shadow">
-    <h4>Total Bookings</h4>
-    <p className="text-2xl font-bold">{totalBookings}</p>
-  </div>
-
-  <div className="bg-white p-6 rounded-2xl shadow">
-    <h4>Repeat Users</h4>
-    <p className="text-2xl font-bold">{repeatUsers}%</p>
-  </div>
-
-  <div className="bg-white p-6 rounded-2xl shadow">
-    <h4>Upcoming Events</h4>
-    <p className="text-2xl font-bold">{upcomingEvents}</p>
-  </div>
-</div>
-      <div className="bg-white p-6 rounded-2xl shadow-xl max-w-6xl mx-auto mb-10">
-  <h3 className="text-xl font-semibold text-blue-700 mb-4 text-center">
-    Top Performing Events
-  </h3>
-
-  <div className="space-y-4">
-    {topEvents.map((event, index) => (
-      <div
-        key={event._id}
-        className="flex justify-between items-center p-4 border rounded-xl bg-blue-50"
-      >
-        <div>
-          <p className="font-semibold text-gray-800">
-            {index + 1}. {event.title}
-          </p>
-          <p className="text-sm text-gray-500">{event.location}</p>
+      {/* Sidebar */}
+      <aside className="w-56 flex-shrink-0 bg-white border-r border-gray-100 flex flex-col p-4 gap-1 sticky top-0 h-screen">
+        <div className="text-base font-semibold text-gray-800 mb-6 px-2">
+          <span className="text-blue-600">Event</span>ify Admin
         </div>
-
-        <div className="text-blue-700 font-bold">
-          {event.ticketsSold || 0} tickets
-        </div>
-      </div>
-    ))}
-  </div>
-</div>
-      <div className="bg-white p-6 rounded-2xl shadow-xl max-w-6xl mx-auto mb-10">
-  <h3 className="text-xl font-semibold text-blue-700 mb-4 text-center">
-    Prediction
-  </h3>
-
-  <div className="flex justify-around text-center">
-    <div>
-      <p className="text-gray-500">Expected Ticket Sales</p>
-      <p className="text-2xl font-bold text-blue-600">{predictedSales}</p>
-    </div>
-
-    <div>
-      <p className="text-gray-500">Expected Revenue</p>
-      <p className="text-2xl font-bold text-green-600">₹{predictedRevenue}</p>
-    </div>
-  </div>
-</div>
-      <div className="bg-white p-6 rounded-2xl shadow-xl mt-10">
-  <h3 className="text-xl font-semibold text-blue-700 mb-4 text-center">
-    Event Distribution (Tickets Sold)
-  </h3>
-
-  <ResponsiveContainer width="100%" height={400}>
-    <PieChart>
-      <Pie
-        data={pieData}
-        dataKey="value"
-        nameKey="name"
-        cx="50%"
-        cy="50%"
-        outerRadius={120}
-        label
-      >
-        {pieData.map((entry, index) => (
-          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+        {navItems.map(n => (
+          <NavItem key={n.id} icon={n.icon} label={n.label} active={activeNav === n.id} onClick={() => setActiveNav(n.id)} />
         ))}
-      </Pie>
-      <Tooltip />
-      <Legend />
-    </PieChart>
-  </ResponsiveContainer>
-</div>
-
-      {message && (
-        <div
-          className={`max-w-3xl mx-auto mb-6 text-center p-4 rounded-xl font-medium transition-all duration-300 ${
-            messageType === 'success'
-              ? 'bg-green-100 text-green-700 border border-green-300'
-              : 'bg-red-100 text-red-700 border border-red-300'
-          }`}
-        >
-          {message}
+        <div className="mt-auto">
+          <NavItem icon="◯" label="Profile" active={false} onClick={() => {}} />
         </div>
-      )}
+      </aside>
 
-      {/* Event Form */}
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white/80 backdrop-blur-xl p-10 rounded-3xl shadow-2xl border border-blue-200 max-w-4xl mx-auto grid gap-8 transition-all duration-500"
-      >
-        <h2 className="text-3xl font-semibold text-blue-900">
-          {editingId ? 'Update Event' : 'Create Event'}
-        </h2>
+      {/* Main content */}
+      <main className="flex-1 px-8 py-8 flex flex-col gap-8 overflow-auto">
 
-        <input
-          type="text"
-          name="title"
-          placeholder="Event Title"
-          value={formData.title}
-          onChange={handleChange}
-          className="p-4 border rounded-xl text-gray-800 focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm placeholder-blue-300"
-          required
-        />
-
-        <textarea
-          name="description"
-          placeholder="Event Description"
-          value={formData.description}
-          onChange={handleChange}
-          className="p-4 border rounded-xl text-gray-800 focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm placeholder-blue-300"
-          required
-        />
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Topbar */}
+        <div className="flex items-center justify-between">
           <div>
-            <label className="block text-sm font-semibold text-blue-700 mb-2">Date</label>
-            <input
-              type="date"
-              name="date"
-              value={formData.date}
-              onChange={handleChange}
-              className="w-full p-3 border text-gray-800 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              required
-            />
+            <h1 className="text-xl font-semibold text-gray-800">Dashboard</h1>
+            <p className="text-xs text-gray-400 mt-0.5">Live event management overview</p>
           </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-blue-700 mb-2">Event Time</label>
-            <input
-              type="text"
-              name="time"
-              placeholder="e.g., 10:00 AM to 12:00 PM"
-              value={formData.time}
-              onChange={handleChange}
-              className="w-full p-3 border text-gray-800 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-blue-300"
-              required
-            />
+          <div className="flex items-center gap-3">
+            <span className="flex items-center gap-1.5 bg-green-50 text-green-700 text-xs font-medium px-3 py-1.5 rounded-full border border-green-200">
+              <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block"></span> Live
+            </span>
+            <button
+              onClick={() => formRef.current?.scrollIntoView({ behavior: 'smooth' })}
+              className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-xl transition"
+            >
+              + New event
+            </button>
           </div>
         </div>
 
-        <input
-          type="text"
-          name="location"
-          placeholder="Event Location"
-          value={formData.location}
-          onChange={handleChange}
-          className="p-4 border rounded-xl text-gray-800 focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm placeholder-blue-300"
-          required
-        />
+        {/* Metric cards */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <MetricCard label="Total Revenue" value={`₹${totalRevenue.toLocaleString('en-IN')}`} sub="All time" color="text-green-600" />
+          <MetricCard label="Total Bookings" value={totalBookings} sub="Tickets sold" color="text-blue-600" />
+          <MetricCard label="Repeat Users" value={`${repeatUsers}%`} sub="Estimated" color="text-purple-600" />
+          <MetricCard label="Upcoming Events" value={upcomingEvents} sub="Scheduled" color="text-amber-600" />
+        </div>
 
-        <input
-          type="text"
-          name="price"
-          placeholder="Ticket Price"
-          value={formData.price}
-          onChange={handleChange}
-          className="p-4 border rounded-xl text-gray-800 focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm placeholder-blue-300"
-          required
-        />
+        {/* Top events + Predictions row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-        <input
-          type="text"
-          name="image"
-          placeholder="Image URL"
-          value={formData.image}
-          onChange={handleChange}
-          className="p-4 border rounded-xl text-gray-800 focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm placeholder-blue-300"
-          required
-        />
-
-        <button
-          type="submit"
-          className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-3 rounded-xl font-semibold shadow-lg transform hover:scale-105 transition duration-300"
-        >
-          {editingId ? 'Update Event' : 'Create Event'}
-        </button>
-      </form>
-
-      {/* Events Table */}
-      <div className="bg-white/90 backdrop-blur-md p-10 mt-16 shadow-2xl max-w-6xl mx-auto">
-        <h2 className="text-3xl font-semibold text-blue-800 mb-6 text-center">All Events</h2>
-        <div className="overflow-x-auto shadow-sm">
-          <table className="min-w-full border text-left bg-white rounded-xl overflow-hidden">
-            <thead className="bg-blue-100 text-blue-800">
-              <tr>
-                <th className="p-4 border">Title</th>
-                <th className="p-4 border">Date</th>
-                <th className="p-4 border">Location</th>
-                <th className="p-4 border">Tickets Sold</th>
-                <th className="p-4 border">Total Collected</th>
-                <th className="p-4 border">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white text-gray-700">
-              {events.map(event => (
-                <tr key={event._id} className="hover:bg-gray-50 transition">
-                  <td className="p-4 border">{event.title}</td>
-                  <td className="p-4 border">{new Date(event.date).toLocaleDateString()}</td>
-                  <td className="p-4 border">{event.location}</td>
-                  <td className="p-4 border">{event.ticketsSold || 0}</td>
-                  <td className="p-4 border">₹{event.totalAmount || 0}</td>
-                  <td className="p-4 border flex gap-3">
-                    <button
-                      onClick={() => handleEdit(event)}
-                      className="px-4 py-2 rounded-lg text-sm font-semibold text-blue-700 bg-yellow-200 hover:bg-yellow-300 transition"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(event._id)}
-                      className="px-4 py-2 rounded-lg text-sm font-semibold text-blue-700 bg-yellow-200 hover:bg-red-600 transition"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
+          {/* Top events */}
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <h2 className="text-sm font-semibold text-gray-700 mb-4">Top performing events</h2>
+            <div className="flex flex-col gap-1">
+              {topEvents.length === 0 && <p className="text-xs text-gray-400">No events yet.</p>}
+              {topEvents.map((event, index) => (
+                <div key={event._id} className="flex items-center justify-between py-3 border-b border-gray-50 last:border-0">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs text-gray-300 w-4">{index + 1}</span>
+                    <div>
+                      <p className="text-sm font-medium text-gray-800">{event.title}</p>
+                      <p className="text-xs text-gray-400">{event.location}</p>
+                    </div>
+                  </div>
+                  <span className="text-sm font-semibold text-blue-600">{event.ticketsSold || 0} tickets</span>
+                </div>
               ))}
-              {events.length === 0 && (
-                <tr>
-                  <td colSpan="6" className="text-center py-6 text-gray-500">
-                    No events found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+            </div>
+          </div>
+
+          {/* Predictions */}
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <h2 className="text-sm font-semibold text-gray-700 mb-4">Predictions (next cycle)</h2>
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              <div className="bg-blue-50 rounded-xl p-4">
+                <p className="text-xs text-blue-500 mb-1">Expected ticket sales</p>
+                <p className="text-xl font-semibold text-blue-700">{predictedSales}</p>
+              </div>
+              <div className="bg-green-50 rounded-xl p-4">
+                <p className="text-xs text-green-600 mb-1">Expected revenue</p>
+                <p className="text-xl font-semibold text-green-700">₹{predictedRevenue.toLocaleString('en-IN')}</p>
+              </div>
+            </div>
+            <ResponsiveContainer width="100%" height={160}>
+              <BarChart data={predData} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                <XAxis dataKey="name" tick={{ fontSize: 11 }} />
+                <YAxis tick={{ fontSize: 11 }} />
+                <Tooltip />
+                <Legend wrapperStyle={{ fontSize: 11 }} />
+                <Bar dataKey="current" fill="#378ADD" name="Current" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="predicted" fill="#1D9E75" name="Predicted" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
-      </div>
-      
-      <div className="bg-white p-6 rounded-2xl shadow-xl mt-10">
-        <h3 className="text-xl font-semibold text-blue-700 mb-4 text-center">Tickets Sold per Event</h3>
-        <ResponsiveContainer width="100%" height={400}>
-          <BarChart
-            data={events.map(e => ({
-              name: e.title.length > 15 ? e.title.slice(0, 15) + '…' : e.title,
-              ticketsSold: e.ticketsSold || 0,
-              totalAmount: e.totalAmount || 0
-            }))}
-            margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" angle={-40} textAnchor="end" interval={0} />
-            <YAxis yAxisId="left" label={{ value: 'Tickets Sold', angle: -90, position: 'insideLeft' }} />
-            <YAxis yAxisId="right" orientation="right" label={{ value: 'Total Amount (₹)', angle: 90, position: 'insideRight' }} />
-            <Tooltip />
-            <Legend />
-            <Bar yAxisId="left" dataKey="ticketsSold" fill="#8884d8" name="Tickets Sold" />
-            <Bar yAxisId="right" dataKey="totalAmount" fill="#82ca9d" name="Total Amount" />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+
+        {/* Bar chart: tickets per event */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+          <h2 className="text-sm font-semibold text-gray-700 mb-4">Tickets sold per event</h2>
+          <ResponsiveContainer width="100%" height={320}>
+            <BarChart data={barData} margin={{ top: 10, right: 30, left: 0, bottom: 60 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <XAxis dataKey="name" angle={-35} textAnchor="end" interval={0} tick={{ fontSize: 11 }} />
+              <YAxis yAxisId="left" tick={{ fontSize: 11 }} label={{ value: 'Tickets', angle: -90, position: 'insideLeft', style: { fontSize: 11 } }} />
+              <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 11 }} label={{ value: 'Amount (₹)', angle: 90, position: 'insideRight', style: { fontSize: 11 } }} />
+              <Tooltip />
+              <Legend wrapperStyle={{ fontSize: 12, paddingTop: 20 }} />
+              <Bar yAxisId="left" dataKey="ticketsSold" fill="#378ADD" name="Tickets Sold" radius={[4, 4, 0, 0]} />
+              <Bar yAxisId="right" dataKey="totalAmount" fill="#1D9E75" name="Total Amount (₹)" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Pie chart: event distribution */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+          <h2 className="text-sm font-semibold text-gray-700 mb-4">Event distribution (tickets sold)</h2>
+          <div className="flex items-center gap-8">
+            <ResponsiveContainer width="60%" height={280}>
+              <PieChart>
+                <Pie data={pieData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={110} label>
+                  {pieData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+            <div className="flex flex-col gap-2">
+              {pieData.map((d, i) => (
+                <div key={i} className="flex items-center gap-2 text-xs text-gray-600">
+                  <span className="w-3 h-3 rounded-sm flex-shrink-0" style={{ background: d.color }}></span>
+                  {d.name} ({d.value})
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Event Form */}
+        <div ref={formRef} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+          <h2 className="text-sm font-semibold text-gray-700 mb-5">{editingId ? 'Update event' : 'Create event'}</h2>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <div className="grid grid-cols-1 gap-4">
+              <div className="flex flex-col gap-1">
+                <label className="text-xs text-gray-400">Title</label>
+                <input
+                  type="text" name="title" placeholder="Event title"
+                  value={formData.title} onChange={handleChange}
+                  className="px-3 py-2.5 text-sm border border-gray-200 rounded-xl bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                  required
+                />
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-xs text-gray-400">Description</label>
+                <textarea
+                  name="description" placeholder="Event description"
+                  value={formData.description} onChange={handleChange}
+                  className="px-3 py-2.5 text-sm border border-gray-200 rounded-xl bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"
+                  rows={3} required
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="flex flex-col gap-1">
+                <label className="text-xs text-gray-400">Date</label>
+                <input
+                  type="date" name="date" value={formData.date} onChange={handleChange}
+                  className="px-3 py-2.5 text-sm border border-gray-200 rounded-xl bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                  required
+                />
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-xs text-gray-400">Time</label>
+                <input
+                  type="text" name="time" placeholder="e.g. 10:00 AM – 12:00 PM"
+                  value={formData.time} onChange={handleChange}
+                  className="px-3 py-2.5 text-sm border border-gray-200 rounded-xl bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                  required
+                />
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-xs text-gray-400">Location</label>
+                <input
+                  type="text" name="location" placeholder="Venue"
+                  value={formData.location} onChange={handleChange}
+                  className="px-3 py-2.5 text-sm border border-gray-200 rounded-xl bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex flex-col gap-1">
+                <label className="text-xs text-gray-400">Ticket price (₹)</label>
+                <input
+                  type="text" name="price" placeholder="500"
+                  value={formData.price} onChange={handleChange}
+                  className="px-3 py-2.5 text-sm border border-gray-200 rounded-xl bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                  required
+                />
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-xs text-gray-400">Image URL</label>
+                <input
+                  type="text" name="image" placeholder="https://..."
+                  value={formData.image} onChange={handleChange}
+                  className="px-3 py-2.5 text-sm border border-gray-200 rounded-xl bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-3 pt-1">
+              <button
+                type="submit"
+                className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-6 py-2.5 rounded-xl transition"
+              >
+                {editingId ? 'Update event' : 'Create event'}
+              </button>
+              <button
+                type="button" onClick={cancelEdit}
+                className="bg-gray-100 hover:bg-gray-200 text-gray-600 text-sm font-medium px-5 py-2.5 rounded-xl transition"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+
+        {/* Events table */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+          <h2 className="text-sm font-semibold text-gray-700 mb-4">All events</h2>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-100">
+                  {['Title', 'Date', 'Location', 'Tickets sold', 'Total collected', 'Actions'].map(h => (
+                    <th key={h} className="text-left text-xs text-gray-400 uppercase tracking-wide pb-3 pr-4 font-medium">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="text-gray-700">
+                {events.map(event => (
+                  <tr key={event._id} className="border-b border-gray-50 hover:bg-gray-50 transition">
+                    <td className="py-3 pr-4 font-medium text-gray-800">{event.title}</td>
+                    <td className="py-3 pr-4 text-gray-500">{new Date(event.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
+                    <td className="py-3 pr-4 text-gray-500">{event.location}</td>
+                    <td className="py-3 pr-4">{event.ticketsSold || 0}</td>
+                    <td className="py-3 pr-4 text-green-600 font-medium">₹{(event.totalAmount || 0).toLocaleString('en-IN')}</td>
+                    <td className="py-3 pr-4">
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleEdit(event)}
+                          className="px-3 py-1.5 rounded-lg text-xs font-medium bg-blue-50 text-blue-700 hover:bg-blue-100 transition"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDelete(event._id)}
+                          className="px-3 py-1.5 rounded-lg text-xs font-medium bg-red-50 text-red-600 hover:bg-red-100 transition"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+                {events.length === 0 && (
+                  <tr>
+                    <td colSpan="6" className="text-center py-8 text-gray-400">No events found.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </main>
     </div>
   );
 };
