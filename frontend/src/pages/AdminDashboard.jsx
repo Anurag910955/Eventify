@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
+  PieChart, Pie, Cell
 } from 'recharts';
 
 const AdminDashboard = () => {
@@ -19,6 +20,14 @@ const AdminDashboard = () => {
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('');
 
+  const totalRevenue = events.reduce((sum, e) => sum + (e.totalAmount || 0), 0);
+const totalBookings = events.reduce((sum, e) => sum + (e.ticketsSold || 0), 0);
+
+const upcomingEvents = events.filter(e => new Date(e.date) > new Date()).length;
+
+// Dummy repeat users (later connect backend)
+const repeatUsers = 40;
+
   const showMessage = (text, type = 'success') => {
     setMessage(text);
     setMessageType(type);
@@ -27,7 +36,8 @@ const AdminDashboard = () => {
       setMessageType('');
     }, 3000);
   };
-
+const predictedSales = Math.round(totalBookings * 1.2);
+const predictedRevenue = Math.round(totalRevenue * 1.2);
   const fetchEvents = async () => {
     try {
       const res = await fetch('https://eventify-olive-seven.vercel.app/api/admin/events');
@@ -38,6 +48,10 @@ const AdminDashboard = () => {
       showMessage('Failed to fetch events.', 'error');
     }
   };
+
+  const topEvents = [...events]
+  .sort((a, b) => (b.ticketsSold || 0) - (a.ticketsSold || 0))
+  .slice(0, 5);
 
   useEffect(() => {
     fetchEvents();
@@ -53,7 +67,11 @@ const AdminDashboard = () => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
-
+  const pieData = events.map(e => ({
+  name: e.title.length > 15 ? e.title.slice(0, 15) + '…' : e.title,
+  value: e.ticketsSold || 0
+}));
+  const COLORS = ['#60a5fa', '#34d399', '#fbbf24', '#f87171', '#a78bfa', '#fb923c'];
   const handleSubmit = async (e) => {
     e.preventDefault();
     const url = editingId
@@ -128,6 +146,95 @@ const AdminDashboard = () => {
       <h1 className="text-5xl font-extrabold text-center mb-12 text-blue-700 drop-shadow-lg tracking-tight">
         Admin Dashboard
       </h1>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
+  <div className="bg-white p-6 rounded-2xl shadow">
+    <h4>Total Revenue</h4>
+    <p className="text-2xl font-bold text-green-600">₹{totalRevenue}</p>
+  </div>
+
+  <div className="bg-white p-6 rounded-2xl shadow">
+    <h4>Total Bookings</h4>
+    <p className="text-2xl font-bold">{totalBookings}</p>
+  </div>
+
+  <div className="bg-white p-6 rounded-2xl shadow">
+    <h4>Repeat Users</h4>
+    <p className="text-2xl font-bold">{repeatUsers}%</p>
+  </div>
+
+  <div className="bg-white p-6 rounded-2xl shadow">
+    <h4>Upcoming Events</h4>
+    <p className="text-2xl font-bold">{upcomingEvents}</p>
+  </div>
+</div>
+      <div className="bg-white p-6 rounded-2xl shadow-xl max-w-6xl mx-auto mb-10">
+  <h3 className="text-xl font-semibold text-blue-700 mb-4 text-center">
+    Top Performing Events
+  </h3>
+
+  <div className="space-y-4">
+    {topEvents.map((event, index) => (
+      <div
+        key={event._id}
+        className="flex justify-between items-center p-4 border rounded-xl bg-blue-50"
+      >
+        <div>
+          <p className="font-semibold text-gray-800">
+            {index + 1}. {event.title}
+          </p>
+          <p className="text-sm text-gray-500">{event.location}</p>
+        </div>
+
+        <div className="text-blue-700 font-bold">
+          {event.ticketsSold || 0} tickets
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
+      <div className="bg-white p-6 rounded-2xl shadow-xl max-w-6xl mx-auto mb-10">
+  <h3 className="text-xl font-semibold text-blue-700 mb-4 text-center">
+    Prediction
+  </h3>
+
+  <div className="flex justify-around text-center">
+    <div>
+      <p className="text-gray-500">Expected Ticket Sales</p>
+      <p className="text-2xl font-bold text-blue-600">{predictedSales}</p>
+    </div>
+
+    <div>
+      <p className="text-gray-500">Expected Revenue</p>
+      <p className="text-2xl font-bold text-green-600">₹{predictedRevenue}</p>
+    </div>
+  </div>
+</div>
+      <div className="bg-white p-6 rounded-2xl shadow-xl mt-10">
+  <h3 className="text-xl font-semibold text-blue-700 mb-4 text-center">
+    Event Distribution (Tickets Sold)
+  </h3>
+
+  <ResponsiveContainer width="100%" height={400}>
+    <PieChart>
+      <Pie
+        data={pieData}
+        dataKey="value"
+        nameKey="name"
+        cx="50%"
+        cy="50%"
+        outerRadius={120}
+        label
+      >
+        {pieData.map((entry, index) => (
+          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+        ))}
+      </Pie>
+      <Tooltip />
+      <Legend />
+    </PieChart>
+  </ResponsiveContainer>
+</div>
 
       {message && (
         <div
@@ -284,6 +391,7 @@ const AdminDashboard = () => {
           </table>
         </div>
       </div>
+      
       <div className="bg-white p-6 rounded-2xl shadow-xl mt-10">
         <h3 className="text-xl font-semibold text-blue-700 mb-4 text-center">Tickets Sold per Event</h3>
         <ResponsiveContainer width="100%" height={400}>
