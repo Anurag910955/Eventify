@@ -76,4 +76,4 @@ const Home = () => {
 </div>
   );
 };
-export default Home; can we also make it modern
+export default Home; 
