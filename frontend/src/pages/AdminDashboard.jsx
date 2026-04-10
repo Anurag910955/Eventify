@@ -25,20 +25,6 @@ const MetricCard = ({ label, value, sub, color }) => (
   </div>
 );
 
-const NavItem = ({ icon, label, active, onClick }) => (
-  <button
-    onClick={onClick}
-    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${
-      active
-        ? 'bg-blue-50 text-blue-700 font-medium'
-        : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800'
-    }`}
-  >
-    <span className="text-base">{icon}</span>
-    {label}
-  </button>
-);
-
 const AdminDashboard = () => {
   const [events, setEvents] = useState([]);
   const [formData, setFormData] = useState({
@@ -48,7 +34,6 @@ const AdminDashboard = () => {
   const [editingId, setEditingId] = useState(null);
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('');
-  const [activeNav, setActiveNav] = useState('overview');
   const formRef = useRef(null);
 
   const totalRevenue = events.reduce((sum, e) => sum + (e.totalAmount || 0), 0);
@@ -160,51 +145,32 @@ const AdminDashboard = () => {
     setEditingId(null);
   };
 
-  const navItems = [
-    { id: 'overview', icon: '⊞', label: 'Overview' },
-    { id: 'events', icon: '☰', label: 'All Events' },
-    { id: 'upcoming', icon: '◷', label: 'Upcoming' },
-    { id: 'analytics', icon: '▣', label: 'Analytics' },
-  ];
-
   return (
-    <div className="flex w-screen min-h-screen bg-gray-50 font-sans">
+    <div className="w-screen min-h-screen bg-gray-50">
       <Toast message={message} type={messageType} />
 
-      {/* Sidebar */}
-      <aside className="w-56 flex-shrink-0 bg-white border-r border-gray-100 flex flex-col p-4 gap-1 sticky top-0 h-screen">
-        <div className="text-base font-semibold text-gray-800 mb-6 px-2">
-          <span className="text-blue-600">Event</span>ify Admin
+      {/* Topbar */}
+      <header className="bg-white border-b border-gray-100 px-8 py-4 flex items-center justify-between sticky top-0 z-40">
+        <div>
+          <span className="text-lg font-semibold text-gray-800">
+            <span className="text-blue-600">Event</span>ify Admin
+          </span>
+          <p className="text-xs text-gray-400 mt-0.5">Live event management overview</p>
         </div>
-        {navItems.map(n => (
-          <NavItem key={n.id} icon={n.icon} label={n.label} active={activeNav === n.id} onClick={() => setActiveNav(n.id)} />
-        ))}
-        <div className="mt-auto">
-          <NavItem icon="◯" label="Profile" active={false} onClick={() => {}} />
+        <div className="flex items-center gap-3">
+          <span className="flex items-center gap-1.5 bg-green-50 text-green-700 text-xs font-medium px-3 py-1.5 rounded-full border border-green-200">
+            <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block"></span> Live
+          </span>
+          <button
+            onClick={() => formRef.current?.scrollIntoView({ behavior: 'smooth' })}
+            className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-xl transition"
+          >
+            + New event
+          </button>
         </div>
-      </aside>
+      </header>
 
-      {/* Main content */}
-      <main className="flex-1 px-8 py-8 flex flex-col gap-8 overflow-auto">
-
-        {/* Topbar */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-semibold text-gray-800">Dashboard</h1>
-            <p className="text-xs text-gray-400 mt-0.5">Live event management overview</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="flex items-center gap-1.5 bg-green-50 text-green-700 text-xs font-medium px-3 py-1.5 rounded-full border border-green-200">
-              <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block"></span> Live
-            </span>
-            <button
-              onClick={() => formRef.current?.scrollIntoView({ behavior: 'smooth' })}
-              className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-xl transition"
-            >
-              + New event
-            </button>
-          </div>
-        </div>
+      <main className="max-w-7xl mx-auto px-6 py-8 flex flex-col gap-8">
 
         {/* Metric cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
