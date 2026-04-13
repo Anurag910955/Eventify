@@ -24,6 +24,7 @@ const Booking = () => {
   const [otpVerified, setOtpVerified] = useState(false);
   const [verifyingOtp, setVerifyingOtp] = useState(false);
   const [sendingOtp, setSendingOtp] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false); // ✅ NEW
 
   const [otpTimer, setOtpTimer] = useState(0);
 
@@ -76,7 +77,7 @@ const Booking = () => {
       });
       if (!res.ok) throw new Error("Failed to send OTP");
       setOtpSent(true);
-      setOtpTimer(120); // 2 minutes
+      setOtpTimer(120);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -155,6 +156,10 @@ const Booking = () => {
       setError("Please verify your OTP before booking.");
       return;
     }
+
+    setIsSubmitting(true); // ✅ Start loading
+    setError("");
+
     try {
       const res = await fetch("https://eventify-olive-seven.vercel.app/api/bookings", {
         method: "POST",
@@ -172,6 +177,8 @@ const Booking = () => {
       setTimeout(() => navigate("/thank-you"), 1500);
     } catch (err) {
       setError(err.message);
+    } finally {
+      setIsSubmitting(false); // ✅ Stop loading
     }
   };
 
@@ -182,7 +189,7 @@ const Booking = () => {
           🎟️ Book Your Spot
         </h2>
         <p className="text-center text-gray-700 mb-6 text-lg md:text-xl font-medium">
-          You’re booking for:{" "}
+          You're booking for:{" "}
           <span className="text-black font-bold italic underline">
             {eventTitle}
           </span>
@@ -296,16 +303,43 @@ const Booking = () => {
               <p className="text-red-500 text-center font-semibold animate-pulse">{error}</p>
             )}
 
+            {/* ✅ UPDATED BUTTON with loading state */}
             <button
               type="submit"
-              disabled={!isPaid || !otpVerified}
-              className={`w-full py-3 rounded-2xl font-bold transition ${
-                isPaid && otpVerified
-                  ? "bg-blue-600 hover:bg-blue-700 "
+              disabled={!isPaid || !otpVerified || isSubmitting}
+              className={`w-full py-3 rounded-2xl font-bold transition flex items-center justify-center gap-2 ${
+                isPaid && otpVerified && !isSubmitting
+                  ? "bg-blue-600 hover:bg-blue-700"
                   : "bg-gray-300 text-gray-500 cursor-not-allowed"
               }`}
             >
-              Confirm Booking
+              {isSubmitting ? (
+                <>
+                  <svg
+                    className="animate-spin h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z"
+                    />
+                  </svg>
+                  Confirming Booking...
+                </>
+              ) : (
+                "Confirm Booking"
+              )}
             </button>
           </form>
         ) : (
