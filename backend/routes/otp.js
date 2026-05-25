@@ -9,7 +9,15 @@ router.post("/send-otp", async (req, res) => {
   const { email } = req.body;
   if (!email) return res.status(400).json({ message: "Email is required" });
 
-  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+let otp;
+if (
+  process.env.NODE_ENV === "development" &&
+  email === "automation@eventifytest.com"
+) {
+  otp = "123456";
+} else {
+  otp = Math.floor(100000 + Math.random() * 900000).toString();
+}
   otpStore.set(email, otp);
   setTimeout(() => otpStore.delete(email), 5 * 60 * 1000); // OTP expires in 5 mins
 
