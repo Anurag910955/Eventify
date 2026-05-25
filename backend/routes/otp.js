@@ -12,7 +12,7 @@ router.post("/send-otp", async (req, res) => {
 let otp;
 if (
   process.env.NODE_ENV === "development" &&
-  email === "automation@eventifytest.com"
+  email === "sen207580@gmail.com"
 ) {
   otp = "123456";
 } else {
