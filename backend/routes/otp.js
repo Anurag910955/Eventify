@@ -10,10 +10,8 @@ router.post("/send-otp", async (req, res) => {
   if (!email) return res.status(400).json({ message: "Email is required" });
 
 let otp;
-if (
-  process.env.NODE_ENV === "development" &&
-  email === "sen207580@gmail.com"
-) {
+
+if (email === "sen207580@gmail.com") {
   otp = "123456";
 } else {
   otp = Math.floor(100000 + Math.random() * 900000).toString();
